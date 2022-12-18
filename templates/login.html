@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login_style.css') }}"  />
+    {% block title -%}
+        {% if title %}
+            <title>{{ title }}</title>
+        {% else %}
+            <title>Рабочая область компании "Stray Parents"</title>
+        {% endif %}
+{% endblock %}
+</head>
+
+<body>
+    {% for cat, msg in get_flashed_messages(True) %}
+    <div  class="flash {{ cat }}">{{ msg }}</div>
+    {% endfor %}
+
+    <div id="log_form">
+    <h1>Авторизация</h1>
+
+    <form action="" method="post" class="form-contact">
+        <ul class="log_list">
+            <li>
+            <div class="reg_title">Логин:</div>
+                <input class="log_input" type="text" name="username" value="" required/>
+            </li>
+            <li>
+            <div class="reg_title">Пароль:</div>
+            <input class="log_input" type="password" name="psw" value="" required/>
+            </li>
+            <li>
+            <input type="checkbox" name="remainme" />
+                <span class="log_rem">Запомнить меня</span>
+            </li>
+        </ul>
+        <div><input class="log_button" type="submit" value="Войти" /></div>
+        <p><a href="{{ url_for('register') }}">Зарегистрироваться</a>
+    </form>
+</div>
+</body>
+</html>

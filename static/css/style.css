@@ -1,0 +1,256 @@
+html, body {
+    font: 100% "Trebuchet MS", sans-serif;
+    color: #670046;
+    background: #ffe5f7;
+}
+
+.clear {
+    clear: both;
+}
+
+ul.mainmenu {
+    list-style: none;
+    background: #830632;
+    height: 60px;
+    margin: 0;
+    padding: 0;
+    font-size: 20px;
+    overflow: hidden;
+
+}
+
+ul.mainmenu li {
+    float: left;
+    margin: 18px 40px 0 50px;
+}
+
+ul.mainmenu li.last {float: right}
+
+ul.mainmenu li a{
+    color: #ffe5f7;
+    text-decoration: none;
+}
+
+ul.mainmenu li a:hover{
+    color: #f89ad8;
+}
+
+div.content h1 {
+    width: auto;
+    text-align: center;
+
+}
+
+.list-posts{
+    display: flex;
+    flex-wrap: wrap;
+    width: auto;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.list-posts .task{
+    width: 400px;
+    border-radius: 8px;
+    font-family: 'Montserrat', sans-serif;
+    background-color: #fcaae3;
+    color: #830632;
+    box-shadow: 5px 5px 10px #494346;
+    margin: 20px 20px 20px 20px;
+}
+
+.task a{
+    color: #480075;
+    text-decoration: underline;
+}
+
+.task a:hover{
+    color: #830632;
+}
+
+.list-posts .title {
+    margin: 0;
+    padding: 10px;
+    background: #fcddff;
+    border-radius: 8px;
+}
+
+.list-posts .annonce {
+    margin: 0;
+    padding: 5px 10px 5px 10px;
+}
+
+.list-posts .clients{
+    width: 400px;
+    border-radius: 8px;
+    font-family: 'Montserrat', sans-serif;
+    background-color: #fcaae3;
+    color: #830632;
+    box-shadow: 5px 5px 10px #494346;
+    margin: 20px 20px 20px 20px;
+}
+
+.list-posts .client{
+    width: 400px;
+    border-radius: 8px;
+    font-family: 'Montserrat', sans-serif;
+    background-color: #fcaae3;
+    color: #830632;
+    box-shadow: 5px 5px 10px #494346;
+    margin: 20px 20px 20px 20px;
+}
+
+#report-form {
+    width: 350px;
+    margin: 20px auto 0 auto;
+    padding: 10px;
+    background: #fcaae3;
+    box-shadow: 5px 5px 10px #494346;
+    border-radius: 8px;
+}
+
+.report {
+    width: 200px;
+    border: none;
+    background: #fcaae3;
+    font-size: 16px;
+    padding: 0 0 0 20px;
+}
+
+.rep_button {
+    font-size: 16px;
+    border-radius: 4px;
+    border: 3px solid #520320;
+    background: #830632;
+    color: white;
+    margin: 10px 0 10px 10px;
+    padding: 1% 30%;
+}
+
+form .search {
+    width: auto;
+    margin: 50px auto auto 600px;
+    background: #ffe5f7;
+    border: 1px solid #830632;
+    display: inline-block;
+    border-radius: 3px;
+    font-size: 20px;
+}
+
+input {
+    padding:4px 10px;
+    border:0;
+    font-size:16px;
+  }
+
+form button{
+    width: 40px;
+    height: 25px;
+    background: #fa6497;
+    color: #570120;
+    border: 1px solid #830632;
+    border-radius: 3px;
+}
+
+form button:hover{
+    background: #fcaae3;
+}
+
+#prof_form {
+    width: 300px;
+    margin: 20px auto 0 auto;
+    padding: 10px;
+    background: #fcaae3;
+    box-shadow: 5px 5px 10px #494346;
+    border-radius: 8px;
+}
+ul.profile-info {
+    list-style: none;
+    padding: 0;
+    margin: 20px 20px 20px 20px;
+    color: #830632;
+}
+
+ul.profile-info li {
+    margin-top: 10px;
+}
+
+#prof_form p{
+    padding-top: 10px;
+    border-top: 1px solid #46021b;
+    text-align: center;
+
+}
+
+#prof_form a:hover {
+    color: #830632;
+    text-decoration: underline;
+}
+
+#add-task{
+    width: 450px;
+    margin: 20px auto 0 auto;
+    padding: 10px;
+    background: #fcaae3;
+    box-shadow: 5px 5px 10px #494346;
+    border-radius: 8px;
+}
+
+.task-button{
+    font-size: 16px;
+    border-radius: 4px;
+    border: 3px solid #520320;
+    background: #830632;
+    color: white;
+    margin: 10px 0 10px 10px;
+    padding: 1% 31%;
+}
+
+form .task_title {
+    padding: 0;
+    margin: 5px auto 5px 20px;
+}
+
+input.task_input{
+    width: 200px;
+    border: none;
+    border-bottom: 1px solid #7a0132;
+    font-size: 16px;
+    margin: 5px auto auto 20px;
+}
+
+.form-contact p {margin: 10px 0 10px 0;}
+.form-contact input[type=submit], textarea {
+    font-size: 16px;
+}
+
+.flash {
+    padding: 10px;
+}
+
+.flash.success{
+    background: #6b91f6;
+    color: white;
+    font-size: 18px;
+    text-align: center;
+}
+
+.flash.error {
+    background: #a80b43;
+    color: white;
+    font-size: 18px;
+    text-align: center;
+}
+
+input[type=text]::-ms-clear {
+    display: none; width : 0; height: 0;
+}
+input[type=text]::-ms-reveal {
+    display: none; width : 0; height: 0;
+}
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-results-button,
+input[type="search"]::-webkit-search-results-decoration {
+    display: none;
+}

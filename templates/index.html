@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+
+    {% block content %}
+        {{ super() }}
+        {% for cat, msg in get_flashed_messages(True) %}
+        <div  class="flash {{ cat }}">{{ msg }}</div>
+        {% endfor %}
+
+        <div class="list-posts">
+            {% for task in tasks %}
+                <div class="task">
+                    <div class="title">Id задания:  <a href="{{ url_for('showTask', id_task=task[0]) }}">{{ task[0] }}</a></div>
+                    <div class="annonce">Дата создания: {{ task[1] }}</div>
+                    <div class="annonce">Дата завершения: {{ task[2] }}</div>
+                    <div class="annonce">Дедлайн: {{ task[3]}}</div>
+                    <div class="annonce">Дата принятия: {{ task[4]}}</div>
+                    <div class="annonce">Завершено задание? {{ task[6]}}</div>
+                    <div class="annonce">Код контракта: {{ task[7]}}</div>
+                    <div class="annonce">Код автора: {{ task[8]}}</div>
+                    <div class="annonce">Код исполнителя: {{ task[9]}}</div>
+                    <div class="annonce">Код клиента: {{ task[10]}}</div>
+                    <div class="annonce">Код приоритета: {{ task[11]}}</div>
+                    <div class="annonce">Описание: {{ task[5]}}</div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endblock %}

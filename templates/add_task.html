@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{{ super() }}
+{% for cat, msg in get_flashed_messages(True) %}
+    <div class="flash {{ cat }}">{{ msg }}</div>
+{% endfor %}
+<div id="add-task">
+    <form action="{{ url_for('addTask') }}" method="post" class="form-contact">
+        <div class="task_title">Статус задания: </div>
+            <input class="task_input" type="text" name="status" value="" required />
+        <div class="task_title">Номер контракта: </div>
+            <input class="task_input" type="text" name="contract" value="" required />
+        <div class="task_title">Номер исполнителя: </div>
+            <input class="task_input" type="text" name="executor" value="" required />
+        <div class="task_title">Номер клиента: </div>
+            <input class="task_input" type="text" name="client" value="" required />
+        <div class="task_title">Код приоритета: </div>
+            <input class="task_input" type="text" name="priority" value="" required />
+        <div class="task_title">Описание: </div>
+        <p><textarea name="description" rows=7 cols=40></textarea>
+        <p><input class="task-button" type="submit" value="Добавить задание" />
+    </form>
+</div>
+{% endblock %}

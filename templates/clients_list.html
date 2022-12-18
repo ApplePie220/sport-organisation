@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+    {% block content %}
+        {{ super() }}
+        {% for cat, msg in get_flashed_messages(True) %}
+        <div  class="flash {{ cat }}">{{ msg }}</div>
+        {% endfor %}
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css">
+        <form action="" method="POST">
+        <div class="search">
+            <input type="search" placeholder="Введите номер клиента " name="id">
+        </div>
+            <button><i class="fas fa-search"></i></button>
+        </form>
+
+        <div class="list-posts">
+        {% for client in clients %}
+        <div class="clients">
+            <p class="title">Номер клиента: {{ client[0] }}</p>
+            <p class="annonce">Имя клиента: {{ client[1] }}</p>
+            <p class="annonce">Номер телефона: {{ client[2] }}</p>
+            <p class="annonce">Эл. почта: {{ client[3]}}</p>
+            <p class="annonce">Почтовый адрес: {{ client[4]}}</p>
+            <p class="annonce">Город: {{ client[5]}}</p>
+            <p class="annonce">Номер организации: {{ client[6]}}</p>
+        </div>
+        {% endfor %}
+        </div>
+    {% endblock %}

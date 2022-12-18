@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+    {% block content %}
+        {{ super() }}
+        {% for cat, msg in get_flashed_messages(True) %}
+        <div  class="flash {{ cat }}">{{ msg }}</div>
+        {% endfor %}
+
+        <div class="list-posts">
+        <div class="client">
+            <p class="title"><label>Id клиента: </label> {{ client[0]}}</p>
+            <p class="annonce"><label>Имя: </label>{{ client[1] }}</p>
+            <p class="annonce"><label>Телефон: </label>{{ client[2] }}</p>
+            <p class="annonce"><label>Email: </label>{{ client[3]}}</p>
+            <p class="annonce"><label>Почтовый адрес: </label>{{ client[4]}}</p>
+            <p class="annonce"><label>Город: </label>{{ client[5]}}</p>
+            <p class="annonce"><label>Код организации: </label>{{ client[6]}}</p>
+        </div>
+        </div>
+    {% endblock %}

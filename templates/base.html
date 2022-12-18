@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html"; charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"  />
+{% block title -%}
+        {% if title %}
+            <title>{{ title }}</title>
+        {% else %}
+            <title>Рабочая область компании "Stray Parents"</title>
+        {% endif %}
+{% endblock %}
+</head>
+<body>
+{% block content -%}
+    {%- block mainmenu -%}
+    <ul class="mainmenu">
+        {% if not current_user.is_authenticated %}
+            <li> <a href="{{ url_for('login') }}">Авторизация</a> </li>
+        {% endif %}
+        {% if current_user.is_authenticated %}
+            <li> <a href="{{ url_for('index') }}">Список заданий</a> </li>
+        {% endif %}
+        {% if current_user.is_authenticated and manager%}
+            <li> <a href="{{ url_for('clients') }}">Список клиентов</a> </li>
+            <li> <a href="{{ url_for('generateReport') }}">Отчет по заданиям</a> </li>
+            <li> <a href="{{ url_for('generate_task_report') }}">Отчет о сотрудниках</a> </li>
+            <li> <a href="{{ url_for('addTask') }}">Добавить задание</a> </li>
+        {% endif %}
+        {% if current_user.is_authenticated %}
+            <li> <a href="{{ url_for('profile') }}">Профиль</a> </li>
+        {% endif %}
+    </ul>
+    {% endblock mainmenu -%}
+    <div class="clear"></div>
+
+    <div class="content">
+        {% if title -%}
+            <h1>{{ title }}</h1>
+        {% else -%}
+            <h1>Рабочая область компании "Stray Parents"</h1>
+        {% endif -%}
+    </div>
+{% endblock -%}
+
+
+</body>
+</html>
