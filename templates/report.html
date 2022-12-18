@@ -5,11 +5,15 @@
 {% for cat, msg in get_flashed_messages(True) %}
     <div class="flash {{ cat }}">{{ msg }}</div>
 {% endfor %}
-
+{% if admin or manager %}
     <div id="report-form">
         <form action="" method="post" class="form-contact">
             <p class="report">Путь сохранения: <input type="text" placeholder="Введите путь" name="path", value="" required />
             <p><input class="rep_button" type="submit" value="Получить отчет" />
         </form>
     </div>
+    {% endif %}
+{% if not admin %}
+            <p>Доступ запрещен. Вернись на <a href="{{ url_for('index') }}">главную</a> страницу.
+        {% endif %}
 {% endblock %}

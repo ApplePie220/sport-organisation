@@ -1,10 +1,10 @@
 from flask import Flask, render_template, url_for, request, flash, session, redirect, abort, g
 from FDataBase import *
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
-from flask_security import Security
 from UserLogin import UserLogin
 from dotenv import load_dotenv
 import psycopg2
+import re
 import os
 
 load_dotenv()
@@ -130,10 +130,14 @@ def clients():
         if request.method == "POST":
             with db:
                 client_id = request.form.get('id')
-                if not client_id:
-                    flash("Введите id клиента для поиска.", "error")
+                check_correct_id = re.findall(r"[^0-9]", client_id)
+                if check_correct_id:
+                    flash("Введите корректный id.","error")
                 else:
-                    return redirect(url_for('showClient', id_client=client_id))
+                    if not client_id:
+                        flash("Введите id клиента для поиска.", "error")
+                    else:
+                        return redirect(url_for('showClient', id_client=client_id))
         clients_list = getClientAnounce(db)
     return render_template('clients_list.html', clients=clients_list, admin = user_id_admin,
                            manager=user_is_manager, title="Список клиентов")
@@ -144,15 +148,19 @@ def clients():
 def showClient(id_client):
     client = None
     if 'current_user' in session:
-        db = connection_db(session.get('current_user', SECRET_KEY)[6], session.get('user_password', SECRET_KEY))
-        position_user = getPositionUser(session.get('current_user', SECRET_KEY)[0], db)
-        user_is_manager = True if position_user['position_number'] == 1 else False
-        user_id_admin = True if position_user['position_number'] == 3 else False
-        with db:
-            client = findClientById(id_client, db)
-            if not client:
-                flash("Клиент с таким id не найден или не существует.", "error")
-                return redirect(url_for('clients'))
+        check_correst_id = re.findall(r"[^0-9]", str(id_client))
+        if check_correst_id:
+            flash("Введите корректный id.", "error")
+        else:
+            db = connection_db(session.get('current_user', SECRET_KEY)[6], session.get('user_password', SECRET_KEY))
+            position_user = getPositionUser(session.get('current_user', SECRET_KEY)[0], db)
+            user_is_manager = True if position_user['position_number'] == 1 else False
+            user_id_admin = True if position_user['position_number'] == 3 else False
+            with db:
+                client = findClientById(id_client, db)
+                if not client:
+                    flash("Клиент с таким id не найден или не существует.", "error")
+                    return redirect(url_for('clients'))
 
     return render_template('client.html',admin=user_id_admin, client=client, manager=user_is_manager,
                            title="Информация о клиенте")
@@ -161,7 +169,7 @@ def showClient(id_client):
 # добавление задания
 @app.route('/add-tasks', methods=["POST", "GET"])
 @login_required
-def addTask():
+def addTrain():
     if 'current_user' in session:
         db = connection_db(session.get('current_user', SECRET_KEY)[6], session.get('user_password', SECRET_KEY))
         position_user = getPositionUser(session.get('current_user', SECRET_KEY)[0], db)
@@ -170,13 +178,13 @@ def addTask():
     if request.method == "POST":
         with db:
             status = request.form.get('status')
-            contract = request.form.get('contract')
-            executor = request.form.get('executor')
-            client = request.form.get('client')
-            priority = request.form.get('priority')
+            data = request.form.get('data')
+            start = request.form.get('start')
+            finish = request.form.get('finish')
+            group = request.form.get('group')
+            trainer = request.form.get('trainer')
             description = request.form.get('description')
-            author = session.get('current_user', SECRET_KEY)[0]
-            if not (status or contract or executor or client or priority or author):
+            if not (status or data or start or finish or group or trainer):
                 flash("Заполните все поля", "error")
             else:
                 res = addtask(status, contract, author, executor, description, client, priority, db)
@@ -185,12 +193,13 @@ def addTask():
                 else:
                     flash('Задание успешно добавлено', category='succes')
             return redirect(url_for('index'))
-    return render_template('add_task.html',admin=user_id_admin, title='Добавление задания',
+    return render_template('add_train.html', admin=user_id_admin, title='Добавление задания',
                            manager=user_is_manager)
 
 
 # отображение всех доступных заданий для пользователя
 @app.route('/index')
+@app.route('/')
 @login_required
 def index():
     if 'current_user' in session:
@@ -201,42 +210,49 @@ def index():
         user_id_admin = True if position_user['position_number'] == 3 else False
         with db:
             print("главная")
-    return render_template('index.html', tasks=trainings,admin = user_id_admin,
-                           manager=user_is_manager, title="Список заданий")
+    return render_template('index.html', trainings=trainings,admin = user_id_admin,
+                           manager=user_is_manager, title="Список тренировок")
 
 
 # отображение конкретного задания и его редактирование
-@app.route('/task/<int:id_task>', methods=['GET', 'POST'])
+@app.route('/task/<int:id_train>', methods=['GET', 'POST'])
 @login_required
-def showTask(id_task):
-    task = None
-    if 'current_user' in session:
-        db = connection_db(session.get('current_user', SECRET_KEY)[6], session.get('user_password', SECRET_KEY))
-        position_user = getPositionUser(session.get('current_user', SECRET_KEY)[0], db)
-        user_is_manager = True if position_user['position_number'] == 1 else False
-        user_id_admin = True if position_user['position_number'] == 3 else False
-        if request.method == "POST":
-            with db:
-                status = request.form.get('status')
-                executor = request.form.get('executor')
-                priority = request.form.get('priority')
-                deadline_date = 'null' if request.form.get('deadline') == 'None' else \
-                    request.form.get('deadline')
-                acception_date = 'null' if request.form.get('accept') == 'None' else \
-                    request.form.get('accept')
-                description = request.form.get('description')
-                if not (status or executor or priority or deadline_date or acception_date):
-                    flash("Заполните все поля", "error")
+def showTrain(id_train):
+        train = None
+        if 'current_user' in session:
+            db = connection_db(session.get('current_user', SECRET_KEY)[6], session.get('user_password', SECRET_KEY))
+            position_user = getPositionUser(session.get('current_user', SECRET_KEY)[0], db)
+            user_is_manager = True if position_user['position_number'] == 1 else False
+            user_id_admin = True if position_user['position_number'] == 3 else False
+            if request.method == "POST":
+                check_correst_id = re.findall(r"[^0-9]", str(id_train))
+                if check_correst_id:
+                    flash("Введите корректный id.", "error")
                 else:
-                    updateTask(status, executor, priority, description, deadline_date, acception_date, db,
-                               id_task, user_is_manager)
-                    flash("Задание успешно изменено", "success")
-                    return redirect(url_for('index'))
-        else:
-            with db:
-                task = getTask(id_task, db)
-    return render_template('task.html',admin=user_id_admin, task=task, manager=user_is_manager,
-                           title="Редактор задания")
+                    with db:
+                        status = request.form.get('status')
+                        start = request.form.get('start')
+                        finish = request.form.get('finish')
+                        date = request.form.get('date')
+                        group = 'null' if request.form.get('group') == 'None' else \
+                            request.form.get('group')
+                        trainer = 'null' if request.form.get('trainer') == 'None' else \
+                            request.form.get('trainer')
+                        description = 'null' if request.form.get('description') == 'None' else \
+                            request.form.get('description')
+                        if not (status or start or finish or date or group or trainer or description):
+                            flash("Заполните все поля", "error")
+                        else:
+                            updateTrain(status,start,finish,date,group,trainer,description, db,
+                                        id_train, user_is_manager, user_id_admin)
+                            flash("Задание успешно изменено", "success")
+                            return redirect(url_for('index'))
+            else:
+                with db:
+                    train = getTrain(id_train, db)
+
+        return render_template('train.html', admin=user_id_admin, training=train, manager=user_is_manager,
+                               title="Редактор задания")
 
 
 # выход из профиля

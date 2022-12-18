@@ -1,0 +1,35 @@
+{%  extends 'base.html' %}
+
+{% block content %}
+{{ super() }}
+
+
+    <div id="add-task">
+        <div class="current-task">
+        <div class="task-id">
+            <h3>Номер тренировки: {{ training[0] }}</h3>
+            </div>
+        </div>
+         <form action="" method="post" class="form-contact">
+             <div class="task_title">Дата проведения: </div>
+                    <input class="task_input" type="text" name="date" value="{{ training[1] }}" required />
+             <div class="task_title">Время начала: </div>
+                    <input class="task_input" type="text" name="start" value="{{ training[2] }}" required />
+             <div class="task_title">Окончание: </div>
+                    <input class="task_input" type="text" name="finish" value="{{ training[3] }}" required />
+             <div class="task_title">Статус: </div>
+                    <input class="task_input" type="text" name="status" value="{{ training[4] }}" required />
+                {% if manager or admin%}
+                    <div class="task_title">Номер группы: </div>
+                        <input class="task_input" type="text" name="group" value="{{ training[6] }}" required />
+                    <div class="task_title">Номер тренера: </div>
+                        <input class="task_input" type="text" name="trainer" value="{{ training[7] }}" required />
+                    <p>Описание: </p>
+                    <p><label>
+                        <textarea name="description" rows=7 cols=40 type="text">{{ training[5] }}</textarea>
+                    </label>
+                {% endif %}
+             <p><input class="task-button" type="submit" value="Изменить тренировку." />
+         </form>
+    </div>
+{% endblock %}

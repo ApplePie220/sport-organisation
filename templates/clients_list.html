@@ -4,9 +4,8 @@
         {% for cat, msg in get_flashed_messages(True) %}
         <div  class="flash {{ cat }}">{{ msg }}</div>
         {% endfor %}
-        {% if not admin %}
+        {% if  admin %}
 
-        {%  %}
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css">
         <form action="" method="POST">
         <div class="search">
@@ -29,4 +28,8 @@
         </div>
         {% endfor %}
         </div>
+        {% endif %}
+        {% if not admin %}
+            <p>Доступ запрещен. Вернись на <a href="{{ url_for('index') }}">главную</a> страницу.
+        {% endif %}
     {% endblock %}

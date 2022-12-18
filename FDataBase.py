@@ -6,7 +6,7 @@ from psycopg2.extras import DictCursor
 def getTrainingAnounce(db):
     try:
         with db.cursor(cursor_factory=DictCursor) as cursor:
-            cursor.execute("SELECT * FROM training ORDER BY training_date")
+            cursor.execute("SELECT * FROM training ORDER BY status")
             res = cursor.fetchall()
             if res:
                 return res
@@ -64,38 +64,38 @@ def addtask(status, contract, author, executor, description, client, priority, d
 
 
 # получить задание по его id из бд
-def getTask(id, db):
+def getTrain(id, db):
     try:
         with db.cursor() as cursor:
-            cursor.execute("SELECT * FROM task WHERE task_number =%(task_number)s",
-                           {'task_number': id})
+            cursor.execute("SELECT * FROM training WHERE training_number =%(training_number)s",
+                           {'training_number': id})
             res = cursor.fetchone()
             if res:
                 return res
     except Exception as e:
         print(e)
-        print("Ошибка получения таска из БД")
+        print("Ошибка получения тренировки из БД.")
     return (False, False)
 
 
 #  для менеджера и обычного сотрудника функции изменения задания разные.
-def updateTask(status, executor, priority, description, deadline, acception, db, task_id, is_manager):
+def updateTrain(stat,start,finish,date,group,trainer,description, db, train_id, is_manager, is_admin):
     try:
         with db.cursor() as cursor:
-            if is_manager:
-                cursor.execute(f'''UPDATE task SET task_description = '{description}',
-                                task_status = '{status}',executor_number = '{executor}',
-                                task_priority = '{priority}',deadline_date = '{deadline}',
-                                acception_date = '{acception}' WHERE task_number = '{task_id}' ''')
+            if is_manager or is_admin:
+                cursor.execute(f'''UPDATE training SET start_time = '{start}',
+                                finish_time = '{finish}',training_date = '{date}',
+                                status = '{stat}',training_name = '{description}',
+                                group_number = '{group}',trainer_number = '{trainer}'
+                                 WHERE training_number = '{train_id}' ''')
             else:
-                cursor.execute(f'''UPDATE task SET task_description = '{description}',
-                                    task_status = '{status}',task_priority = '{priority}',
-                                    deadline_date = '{deadline}',acception_date = '{acception}'
-                                    WHERE task_number = '{task_id}' ''')
+                cursor.execute(f'''UPDATE training SET start_time = '{start}',
+                                finish_time = '{finish}',training_date = '{date}',
+                                status = '{stat}' WHERE training_number = '{train_id}' ''')
 
     except Exception as e:
         print(e)
-        print("Ошибка получения таска из БД")
+        print("Ошибка редактирования тренировки.")
 
 
 # добавление нового пользователя в бд

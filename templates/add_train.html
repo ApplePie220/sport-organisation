@@ -5,8 +5,9 @@
 {% for cat, msg in get_flashed_messages(True) %}
     <div class="flash {{ cat }}">{{ msg }}</div>
 {% endfor %}
+    {% if admin or manager %}
 <div id="add-task">
-    <form action="{{ url_for('addTask') }}" method="post" class="form-contact">
+    <form action="{{ url_for('addTrain') }}" method="post" class="form-contact">
         <div class="task_title">Статус задания: </div>
             <input class="task_input" type="text" name="status" value="" required />
         <div class="task_title">Номер контракта: </div>
@@ -22,4 +23,8 @@
         <p><input class="task-button" type="submit" value="Добавить задание" />
     </form>
 </div>
+    {% endfor %}
+{% if not admin %}
+            <p>Доступ запрещен. Вернись на <a href="{{ url_for('index') }}">главную</a> страницу.
+        {% endif %}
 {% endblock %}

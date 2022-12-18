@@ -12,6 +12,7 @@
 {% endblock %}
 </head>
 <body>
+{% if admin %}
     {% for cat, msg in get_flashed_messages(True) %}
     <div  class="flash {{ cat }}">{{ msg }}</div>
     {% endfor %}
@@ -56,5 +57,9 @@
         <div><input class="reg_button" type="submit" value="Регистрация"></div>
     </form>
     </div>
+{% endif %}
+{% if not admin %}
+            <p>Доступ запрещен. Вернись на <a href="{{ url_for('index') }}">главную</a> страницу.
+{% endif %}
 </body>
 </html>

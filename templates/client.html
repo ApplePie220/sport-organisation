@@ -4,7 +4,7 @@
         {% for cat, msg in get_flashed_messages(True) %}
         <div  class="flash {{ cat }}">{{ msg }}</div>
         {% endfor %}
-
+        {% if admin %}
         <div class="list-posts">
         <div class="client">
             <p class="title"><label>Id клиента: </label> {{ client[0]}}</p>
@@ -17,4 +17,8 @@
             <p class="annonce">Адрес: {{ client[6]}}</p>
         </div>
         </div>
+        {% endif %}
+        {% if not admin %}
+            <p>Доступ запрещен. Вернись на <a href="{{ url_for('index') }}">главную</a> страницу.
+        {% endif %}
     {% endblock %}
