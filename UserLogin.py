@@ -16,7 +16,7 @@ class UserLogin(UserMixin):
         return str(self.__user['employee_number'])
 
     def getName(self):
-        return self.__user['employee_name'] if self.__user else "Без имени (ты кто)"
+        return self.__user['employee_firstname'] if self.__user else "Без имени (ты кто)"
 
     def getEmail(self):
         return self.__user['employee_email'] if self.__user else "Без почты (почему..)"
@@ -25,4 +25,4 @@ class UserLogin(UserMixin):
         return self.__user['employee_phone'] if self.__user else "Без телефона (треш)"
 
     def getRoleId(self):
-        return self.__user['position_id'] if self.__user else "Нет должности (странно)"
+        return self.__user['position_number'] if self.__user else "Нет должности (странно)"

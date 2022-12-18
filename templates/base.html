@@ -19,13 +19,18 @@
             <li> <a href="{{ url_for('login') }}">Авторизация</a> </li>
         {% endif %}
         {% if current_user.is_authenticated %}
-            <li> <a href="{{ url_for('index') }}">Список заданий</a> </li>
+            <li> <a href="{{ url_for('index') }}">Тренировки</a> </li>
         {% endif %}
         {% if current_user.is_authenticated and manager%}
-            <li> <a href="{{ url_for('clients') }}">Список клиентов</a> </li>
-            <li> <a href="{{ url_for('generateReport') }}">Отчет по заданиям</a> </li>
-            <li> <a href="{{ url_for('generate_task_report') }}">Отчет о сотрудниках</a> </li>
-            <li> <a href="{{ url_for('addTask') }}">Добавить задание</a> </li>
+            <li> <a href="{{ url_for('clients') }}">Добавить тренировку</a> </li>
+            <li> <a href="{{ url_for('generateReport') }}">Отчет тренировок</a> </li>
+        {% endif %}
+        {% if current_user.is_authenticated and admin%}
+            <li> <a href="{{ url_for('clients') }}">Клиенты</a> </li>
+            <li> <a href="{{ url_for('generateReport') }}">Добавить клиента</a> </li>
+            <li> <a href="{{ url_for('generateReport') }}">Добавить сотрудника</a> </li>
+            <li> <a href="{{ url_for('generateReport') }}">Спорт. оборудование</a> </li>
+            <li> <a href="{{ url_for('generateReport') }}">Спорт. группы</a> </li>
         {% endif %}
         {% if current_user.is_authenticated %}
             <li> <a href="{{ url_for('profile') }}">Профиль</a> </li>

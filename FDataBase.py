@@ -3,16 +3,16 @@ from psycopg2.extras import DictCursor
 
 
 # получение всех доступных заданий из бд
-def getTaskAnounce(db):
+def getTrainingAnounce(db):
     try:
         with db.cursor(cursor_factory=DictCursor) as cursor:
-            cursor.execute("SELECT * FROM task ORDER BY task_number")
+            cursor.execute("SELECT * FROM training ORDER BY training_date")
             res = cursor.fetchall()
             if res:
                 return res
     except Exception as e:
         print(e)
-        print("Ошибка в получении заданий.")
+        print("Ошибка в получении тренировок.")
 
     return []
 
@@ -179,7 +179,7 @@ def getPassUserByLogin(login, pasw, db):
 def getPositionUser(user_id, db):
     try:
         with db.cursor(cursor_factory=DictCursor) as cursor:
-            cursor.execute("SELECT position_id FROM employee WHERE employee_number = %(employee_number)s",
+            cursor.execute("SELECT position_number FROM employee WHERE employee_number = %(employee_number)s",
                            {'employee_number': user_id})
             res = cursor.fetchone()
             if not res:
