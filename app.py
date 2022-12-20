@@ -99,23 +99,26 @@ def login():
 # регистрация пользователя
 @app.route('/register', methods=["POST", "GET"])
 def register():
+    db = connection_db(DB_USER, DB_PASSWORD)
+    position_user = getPositionUser(session.get('current_user', SECRET_KEY)[0], db)
+    user_id_admin = True if position_user['position_number'] == 3 else False
     if request.method == "POST":
-        db = connection_db(DB_USER, DB_PASSWORD)
         with db:
-            if len(request.form['name']) > 0 and len(request.form['username']) > 0 \
-                    and len(request.form['psw']) > 3 and request.form['psw'] == request.form['psw2']:
-                res = addUser(request.form['name'], request.form['username'],
-                              request.form['psw'], request.form['phone'], request.form['email'], request.form['role'],
+            if len(request.form['username']) > 0 and len(request.form['psw']) > 3 and \
+                    request.form['psw'] == request.form['psw2']:
+                res = addUser(request.form['firstname'],request.form['surname'],request.form['lastname'],
+                              request.form['email'],request.form['phone'],request.form['username'],
+                              request.form['psw'], request.form['expirience'], request.form['role'],
                               db)
                 if res:
-                    flash('Вы успешно зарегистрированы.', 'success')
-                    return redirect(url_for('login'))
+                    flash('Работник успешно зарегистрирован.', 'success')
+                    return redirect(url_for('index'))
                 else:
-                    flash('Ошибка при Добавлении в бд', 'error')
+                    flash('Ошибка при добавлении работника в бд.', 'error')
             else:
                 flash('Неверно заполнены поля', 'error')
 
-    return render_template('register.html', title="Регистрация")
+    return render_template('register.html', title="Регистрация работника.", admin = user_id_admin)
 
 
 # отображение списка клиентов
@@ -142,6 +145,54 @@ def clients():
     return render_template('clients_list.html', clients=clients_list, admin = user_id_admin,
                            manager=user_is_manager, title="Список клиентов")
 
+@app.route('/groups')
+@login_required
+def groups():
+    if 'current_user' in session:
+        db = connection_db(session.get('current_user', SECRET_KEY)[6], session.get('user_password', SECRET_KEY))
+        groups = getgroups(db)
+        position_user = getPositionUser(session.get('current_user', SECRET_KEY)[0], db)
+        user_is_manager = True if position_user['position_number'] == 1 else False
+        user_id_admin = True if position_user['position_number'] == 3 else False
+    return render_template('groups_list.html', groups=groups, admin=user_id_admin,
+                           manager=user_is_manager, title="Список спортивных групп.")
+
+@app.route('/equipments')
+@login_required
+def equipment():
+    if 'current_user' in session:
+        db = connection_db(session.get('current_user', SECRET_KEY)[6], session.get('user_password', SECRET_KEY))
+        equips = getequips(db)
+        position_user = getPositionUser(session.get('current_user', SECRET_KEY)[0], db)
+        user_is_manager = True if position_user['position_number'] == 1 else False
+        user_id_admin = True if position_user['position_number'] == 3 else False
+    return render_template('groups_list.html', equips=equips, admin=user_id_admin,
+                           manager=user_is_manager, title="Список оборудования.")
+
+@app.route('/add-group', methods=["POST", "GET"])
+@login_required
+def addGroup():
+    if 'current_user' in session:
+        db = connection_db(session.get('current_user', SECRET_KEY)[6], session.get('user_password', SECRET_KEY))
+        position_user = getPositionUser(session.get('current_user', SECRET_KEY)[0], db)
+        user_is_manager = True if position_user['position_number'] == 1 else False
+        user_id_admin = True if position_user['position_number'] == 3 else False
+    if request.method == "POST":
+        with db:
+            name = request.form.get('name')
+            type = request.form.get('type')
+            if not (name or type):
+                flash("Заполните все поля", "error")
+            else:
+                res = addgroup(name,type, db)
+                if not res:
+                    flash('Ошибка добавления группы', category='error')
+                else:
+                    flash('Группа успешно добавлена', category='succes')
+            return redirect(url_for('groups'))
+    return render_template('add_group.html', admin=user_id_admin, title='Добавление группы.',
+                           manager=user_is_manager)
+
 
 # Отображение клиента, которого вводишь в поиске
 @app.route('/client/<int:id_client>')
@@ -162,40 +213,72 @@ def showClient(id_client):
                     flash("Клиент с таким id не найден или не существует.", "error")
                     return redirect(url_for('clients'))
 
-    return render_template('client.html',admin=user_id_admin, client=client, manager=user_is_manager,
-                           title="Информация о клиенте")
+    return render_template('client.html',admin=user_id_admin, client=client, title="Информация о клиенте")
+
+
+
 
 
 # добавление задания
-@app.route('/add-tasks', methods=["POST", "GET"])
+@app.route('/add-train', methods=["POST", "GET"])
 @login_required
 def addTrain():
     if 'current_user' in session:
         db = connection_db(session.get('current_user', SECRET_KEY)[6], session.get('user_password', SECRET_KEY))
         position_user = getPositionUser(session.get('current_user', SECRET_KEY)[0], db)
-        user_is_manager = True if position_user['position_id'] == 1 else False
+        user_is_manager = True if position_user['position_number'] == 1 else False
         user_id_admin = True if position_user['position_number'] == 3 else False
     if request.method == "POST":
         with db:
             status = request.form.get('status')
-            data = request.form.get('data')
+            date = request.form.get('date')
             start = request.form.get('start')
             finish = request.form.get('finish')
             group = request.form.get('group')
             trainer = request.form.get('trainer')
             description = request.form.get('description')
-            if not (status or data or start or finish or group or trainer):
+            if not (status or date or start or finish or group or trainer or description):
                 flash("Заполните все поля", "error")
             else:
-                res = addtask(status, contract, author, executor, description, client, priority, db)
+                res = addtrain(status, date, start, finish, group, trainer, description, db)
                 if not res:
-                    flash('Ошибка добавления задания', category='error')
+                    flash('Ошибка добавления тренировки', category='error')
                 else:
-                    flash('Задание успешно добавлено', category='succes')
+                    flash('Тренировка успешно добавлена', category='succes')
             return redirect(url_for('index'))
-    return render_template('add_train.html', admin=user_id_admin, title='Добавление задания',
+    return render_template('add_train.html', admin=user_id_admin, title='Добавление тренировки',
                            manager=user_is_manager)
 
+
+@app.route('/add-client', methods=["POST", "GET"])
+@login_required
+def addClient():
+    if 'current_user' in session:
+        db = connection_db(session.get('current_user', SECRET_KEY)[6], session.get('user_password', SECRET_KEY))
+        position_user = getPositionUser(session.get('current_user', SECRET_KEY)[0], db)
+        user_is_manager = True if position_user['position_number'] == 1 else False
+        user_id_admin = True if position_user['position_number'] == 3 else False
+        groups = getgroups(db)
+    if request.method == "POST":
+        with db:
+            firstname = request.form.get('firstname')
+            surname = request.form.get('surname')
+            lastname = request.form.get('lastname')
+            phone = request.form.get('phone')
+            mail = request.form.get('mail')
+            address = request.form.get('address')
+            date = request.form.get('date')
+            group = int(request.form.get('group'))
+            if not (firstname or surname or lastname or phone or mail or address or date or group):
+                flash("Заполните все поля", "error")
+            else:
+                res = addclient(firstname, surname, lastname,phone, mail, address,date,group, db)
+                if not res:
+                    flash('Ошибка добавления клиента.', category='error')
+                else:
+                    flash('Клиент успешно добавлен.', category='succes')
+            return redirect(url_for('clients'))
+    return render_template('add_client.html',groups=groups, admin=user_id_admin, title='Добавление клиента.')
 
 # отображение всех доступных заданий для пользователя
 @app.route('/index')
@@ -227,7 +310,7 @@ def showTrain(id_train):
             if request.method == "POST":
                 check_correst_id = re.findall(r"[^0-9]", str(id_train))
                 if check_correst_id:
-                    flash("Введите корректный id.", "error")
+                    flash("Incorrect id.", "error")
                 else:
                     with db:
                         status = request.form.get('status')
@@ -245,14 +328,14 @@ def showTrain(id_train):
                         else:
                             updateTrain(status,start,finish,date,group,trainer,description, db,
                                         id_train, user_is_manager, user_id_admin)
-                            flash("Задание успешно изменено", "success")
+                            flash("Тренировка успешно изменена", "success")
                             return redirect(url_for('index'))
             else:
                 with db:
                     train = getTrain(id_train, db)
 
         return render_template('train.html', admin=user_id_admin, training=train, manager=user_is_manager,
-                               title="Редактор задания")
+                               title="Редактор тренировки")
 
 
 # выход из профиля
@@ -274,32 +357,9 @@ def profile():
     user_id_admin = True if position_user['position_number'] == 3 else False
     return render_template("profile.html", title="Профиль", manager=user_is_manager, admin = user_id_admin)
 
-
-# генерация отчета по заданиям в формате json
-@app.route('/report', methods=['POST', 'GET'])
-def generateReport():
-    if 'current_user' in session:
-        db = connection_db(DB_USER, DB_PASSWORD)
-        position_user = getPositionUser(session.get('current_user', SECRET_KEY)[0], db)
-        user_is_manager = True if position_user['position_number'] == 1 else False
-        user_id_admin = True if position_user['position_number'] == 3 else False
-    if request.method == "POST":
-        with db:
-            path = request.form.get('path')
-            if not path:
-                flash("Введите путь, куда нужно сохранять файл", "error")
-            else:
-                getReport(path, db)
-                flash("Отчет успешно сформирован по указанному пути.", "success")
-                return redirect(url_for('index'))
-
-    return render_template('report.html', manager=user_is_manager,admin = user_id_admin,
-                           title="Генерация отчета по заданиям.")
-
-
 # генерация отчета по заданиям для конкретного работника в формате csv
-@app.route('/task-report', methods=['POST', 'GET'])
-def generate_task_report():
+@app.route('/train-report', methods=['POST', 'GET'])
+def generate_train_report():
     if 'current_user' in session:
         db = connection_db(DB_USER, DB_PASSWORD)
         position_user = getPositionUser(session.get('current_user', SECRET_KEY)[0], db)
@@ -307,19 +367,18 @@ def generate_task_report():
         user_id_admin = True if position_user['position_number'] == 3 else False
     if request.method == "POST":
         with db:
-            id = request.form.get('id')
             start_date = request.form.get('start')
             finish_date = request.form.get('finish')
             path = request.form.get('path')
-            if not (path or id or start_date or finish_date):
+            if not (path or start_date or finish_date):
                 flash("Заполните все поля!", "error")
             else:
-                get_report_task(path, start_date, finish_date, id, db)
+                get_report_task(path, start_date, finish_date, db)
                 flash("Отчет успешно сформирован по указанному пути.", "success")
                 return redirect(url_for('index'))
 
     return render_template('worker_report.html',admin=user_id_admin, manager=user_is_manager,
-                           title="Генерация отчета по сотруднику.")
+                           title="Генерация отчета по тренировкам.")
 
 
 if __name__ == '__main__':

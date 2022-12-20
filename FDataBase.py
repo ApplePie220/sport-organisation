@@ -48,16 +48,29 @@ def findClientById(client_id, db):
 
     return False
 
-
-# добавление нового задания в бд
-def addtask(status, contract, author, executor, description, client, priority, db):
+# добавление новой тренировки в бд
+def addclient(firstname, surname, lastname,phone, mail, address,date,group, db):
     try:
         with db.cursor() as cursor:
-            cursor.execute("CALL add_task(%s,%s,%s,%s,%s,%s,%s)",
-                           (description, status, contract, author, executor, client, priority))
-            # db.commit()
+            cursor.execute("CALL add_client_transaction(%s,%s,%s,%s,%s,%s,%s,%s)",
+                           (firstname, surname, lastname,phone, mail, address,date, group))
+            db.commit()
     except Exception as e:
-        print("Ошибкад добавления задачи " + e)
+        print("Ошибкад добавления клиента." + e)
+        return False
+
+    return True
+
+
+# добавление новой тренировки в бд
+def addtrain(status, date, start, finish, group, trainer, description, db):
+    try:
+        with db.cursor() as cursor:
+            cursor.execute("CALL add_training(%s,%s,%s,%s,%s,%s,%s)",
+                           (date, start, finish, status, description, group, trainer))
+            db.commit()
+    except Exception as e:
+        print("Ошибкад добавления тренировки " + e)
         return False
 
     return True
@@ -92,22 +105,50 @@ def updateTrain(stat,start,finish,date,group,trainer,description, db, train_id, 
                 cursor.execute(f'''UPDATE training SET start_time = '{start}',
                                 finish_time = '{finish}',training_date = '{date}',
                                 status = '{stat}' WHERE training_number = '{train_id}' ''')
-
+        db.commit()
     except Exception as e:
         print(e)
         print("Ошибка редактирования тренировки.")
 
 
+def getgroups(db):
+    try:
+        with db.cursor(cursor_factory=DictCursor) as cursor:
+            cursor.execute("SELECT * FROM vieww")
+            res = cursor.fetchall()
+            if not res:
+                print("Группы не найдены.")
+                return False
+            return res
+    except Exception as e:
+        print(e)
+        print("Ошибка получения спорт. групп из бд.")
+    return False
+
+def addgroup(name,type, db):
+    try:
+        with db.cursor() as cursor:
+            cursor.execute("CALL add_group(%s,%s)",
+                           (name,type))
+            db.commit()
+    except Exception as e:
+        print("Ошибкад добавления тренировки " + e)
+        return False
+
+    return True
+
 # добавление нового пользователя в бд
-def addUser(name, login, password, phone, email, role, db):
+def addUser(firstname, surname, lastname, email, phone, login, password,expirience, role, db):
     try:
         id_role = 0
-        if role == 'worker':
+        if role == 'trainer':
             id_role = 2
         if role == 'manager':
             id_role = 1
         with db.cursor() as cursor:
-            cursor.execute("CALL create_user(%s,%s,%s,%s,%s,%s)", (name, email, phone, login, password, id_role))
+            cursor.execute("CALL create_user(%s,%s,%s,%s,%s,%s,%s,%s,%s)", (firstname, surname, lastname, email,
+                                                                   phone, login, password,expirience,
+                                                                   id_role))
             db.commit()
     except Exception as e:
         print(e)
@@ -115,6 +156,21 @@ def addUser(name, login, password, phone, email, role, db):
         return False
 
     return True
+
+def getequips(db):
+    try:
+        with db.cursor(cursor_factory=DictCursor) as cursor:
+            cursor.execute("SELECT * FROM sport_equip_training")
+            res = cursor.fetchall()
+            if not res:
+                print("Группы не найдены.")
+                return False
+            return res
+    except Exception as e:
+        print(e)
+        print("Ошибка получения спорт. групп из бд.")
+    return False
+
 
 
 # получение пользователя из бд по его Id
@@ -194,25 +250,11 @@ def getPositionUser(user_id, db):
     return False
 
 
-# создание отчета по заданиям
-def getReport(path, db):
+# создание отчета по тренировкам
+def get_report_task(path, start, finish, db):
     try:
         with db.cursor() as cursor:
-            cursor.execute(f'''CALL export_report_json('{path}')''')
-
-    except Exception as e:
-        print(e)
-        print("Ошибка вызова функции генерации отчета.")
-        return False
-
-    return True
-
-
-# создание отчета по заданиям для конкретного пользователя
-def get_report_task(path, start, finish, id, db):
-    try:
-        with db.cursor() as cursor:
-            cursor.execute(f'''CALL export_data_employee_csv('{id}','{start}','{finish}','{path}')''')
+            cursor.execute(f'''CALL export_data_training_csv('{start}','{finish}','{path}')''')
 
     except Exception as e:
         print(e)

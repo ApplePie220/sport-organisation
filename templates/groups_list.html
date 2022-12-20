@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+
+    {% block content %}
+        {{ super() }}
+        {% for cat, msg in get_flashed_messages(True) %}
+        <div  class="flash {{ cat }}">{{ msg }}</div>
+        {% endfor %}
+        {% if admin %}
+            <div><button onclick="document.location='{{ url_for('addGroup') }}'">Добавить группу</button></div>
+        <div class="list-posts">
+            {% for group in groups %}
+                <div class="task">
+                    <div class="title">Id группы: {{ group[0] }}</div>
+                    <div class="annonce">Название: {{ group[2] }}</div>
+                    <div class="annonce">Вид спорта: {{ group[1] }}</div>
+                    <div class="annonce">Количество человек в группе: {{ group[3]}}</div>
+                </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% if not admin%}
+            <p>Доступ запрещен. Вернись на <a href="{{ url_for('index') }}">главную</a> страницу.
+        {% endif %}
+
+    {% endblock %}

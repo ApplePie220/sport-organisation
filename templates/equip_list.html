@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+
+    {% block content %}
+        {{ super() }}
+        {% for cat, msg in get_flashed_messages(True) %}
+        <div  class="flash {{ cat }}">{{ msg }}</div>
+        {% endfor %}
+        {% if admin %}
+        <div class="list-posts">
+            {% for equip in equips %}
+                <div class="task">
+                    <div class="title">Id оборудования: {{ equip[0] }}</div>
+                    <div class="annonce">Название: {{ equip[2] }}</div>
+                    <div class="annonce">Вид спорта: {{ equip[1] }}</div>
+                    <div class="annonce">Количество человек в группе: {{ equip[3]}}</div>
+                </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% if not admin%}
+            <p>Доступ запрещен. Вернись на <a href="{{ url_for('index') }}">главную</a> страницу.
+        {% endif %}
+
+    {% endblock %}

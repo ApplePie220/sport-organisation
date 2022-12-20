@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{{ super() }}
+    {% if admin  %}
+<div id="add-task">
+    <form action="" method="post" class="form-contact">
+        <div class="task_title">Имя: </div>
+            <input class="task_input" type="text" name="firstname" value="" required />
+        <div class="task_title">Фамилия: </div>
+            <input class="task_input" type="text" name="surname" value="" required />
+        <div class="task_title">Отчество: </div>
+            <input class="task_input" type="text" name="lastname" value="" required />
+        <div class="task_title">Номер: </div>
+            <input class="task_input" type="text" name="phone" value="" placeholder="формат xxxxxxxxxxx" required />
+        <div class="task_title">Почта: </div>
+            <input class="task_input" type="text" name="mail" value="" placeholder="формат example@example.com" required />
+        <div class="task_title">Адрес: </div>
+            <input class="task_input" type="text" name="address" value="" required />
+        <div class="task_title">Дата рождения: </div>
+            <input class="task_input" type="text" name="date" value="" placeholder="формат YY-MM-DD" required />
+        <div class="task_title">Номер группы:
+            <select class="reg_select" name="group">
+                {% for group in groups %}
+                <option value="{{ group[0] }}">{{ group[0] }}</option>
+                {% endfor %}
+            </select>
+            </div>
+        <p><input class="task-button" type="submit" value="Добавить клиента." />
+    </form>
+</div>
+    {% endif %}
+{% if not admin %}
+            <p>Доступ запрещен. Вернись на <a href="{{ url_for('index') }}">главную</a> страницу.
+        {% endif %}
+{% endblock %}

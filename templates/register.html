@@ -1,65 +1,42 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/regist_style.css') }}"  />
-    {% block title -%}
-        {% if title %}
-            <title>{{ title }}</title>
-        {% else %}
-            <title>Рабочая область компании "Stray Parents"</title>
-        {% endif %}
-{% endblock %}
-</head>
-<body>
-{% if admin %}
-    {% for cat, msg in get_flashed_messages(True) %}
-    <div  class="flash {{ cat }}">{{ msg }}</div>
-    {% endfor %}
-    <div id="reg_form">
-    <h1>Форма регистрации</h1>
+{% extends 'base.html' %}
 
-    <form action="/register" method="post" class="form-contact">
-    <ul class="reg_list">
-        <li>
-            <div class="reg_title">Имя:</div>
-            <input class="reg_input" type="text" name="name" value="" required/>
-        </li>
-        <li>
-            <div class="reg_title">Логин:</div>
-            <input class="reg_input" type="text" name="username" value="" required/>
-        </li>
-        <li>
-           <div class="reg_title">Пароль:</div>
-            <input class="reg_input" type="password" name="psw" value="" required/>
-        </li>
-        <li>
-           <div class="reg_title">Повторите пароль:</div>
-            <input class="reg_input" type="password" name="psw2" value="" required/>
-        </li>
-        <li>
-            <div class="reg_title">Телефон:</div>
-            <input class="reg_input" type="text" name="phone" value="" required/>
-        </li>
-        <li>
-             <div class="reg_title">Почта:</div>
-            <input class="reg_input" type="text" name="email" value="" required/>
-        </li>
-        <li>
-            <div class="reg_title">Ваша роль
+{% block content %}
+{{ super() }}
+{% for cat, msg in get_flashed_messages(True) %}
+    <div class="flash {{ cat }}">{{ msg }}</div>
+{% endfor %}
+    {% if admin %}
+<div id="add-task">
+    <form action="" method="post" class="form-contact">
+        <div class="task_title"> Имя: </div>
+            <input class="task_input" type="text" name="firstname" value="" required />
+        <div class="task_title">Фамилия: </div>
+            <input class="task_input" type="text" name="surname" value="" required />
+        <div class="task_title">Отчество: </div>
+            <input class="task_input" type="text" name="lastname" value="" required />
+        <div class="task_title">Почта: </div>
+            <input class="task_input" type="text" name="email" value="" placeholder="формат example@example.com" required />
+        <div class="task_title">Телефон: </div>
+            <input class="task_input" type="text" name="phone" value="" placeholder="формат xxxxxxxxxxx" required />
+        <div class="task_title">Логин: </div>
+            <input class="task_input" type="text" name="username" value="" required />
+        <div class="task_title">Пароль: </div>
+            <input class="task_input" type="password" name="psw" value="" required />
+        <div class="task_title">Повтор пароля: </div>
+            <input class="task_input" type="password" name="psw2" value="" required />
+        <div class="task_title">Опыт работы: </div>
+            <input class="task_input" type="text" name="expirience" value="" placeholder="полных лет" required />
+        <div class="task_title">Роль:
             <select class="reg_select" name="role">
-                <option value="worker">работник</option>
+                <option value="trainer">тренер</option>
                 <option value="manager">менеджер</option>
             </select>
             </div>
-        </li>
-        </ul>
-        <div><input class="reg_button" type="submit" value="Регистрация"></div>
+        <p><input class="task-button" type="submit" value="Добавить cсотрудника" />
     </form>
-    </div>
-{% endif %}
-{% if not admin %}
+</div>
+    {% endif %}
+{% if not admin%}
             <p>Доступ запрещен. Вернись на <a href="{{ url_for('index') }}">главную</a> страницу.
-{% endif %}
-</body>
-</html>
+        {% endif %}
+{% endblock %}

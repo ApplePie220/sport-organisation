@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{{ super() }}
+    {% if admin  %}
+<div id="add-task">
+    <form action="" method="post" class="form-contact">
+        <div class="task_title">Название группы: </div>
+            <input class="task_input" type="text" name="name" placeholder="Пример: БАСК2-22" value="" required />
+        <div class="task_title">Вид спорта: </div>
+            <input class="task_input" type="text" name="type" placeholder="Пример: Баскетбол" value="" required />
+        <p><input class="task-button" type="submit" value="Добавить группу" />
+    </form>
+</div>
+    {% endif %}
+{% if not admin %}
+            <p>Доступ запрещен. Вернись на <a href="{{ url_for('index') }}">главную</a> страницу.
+        {% endif %}
+{% endblock %}

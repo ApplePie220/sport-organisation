@@ -5,26 +5,28 @@
 {% for cat, msg in get_flashed_messages(True) %}
     <div class="flash {{ cat }}">{{ msg }}</div>
 {% endfor %}
-    {% if admin or manager %}
+    {% if (admin or manager) %}
 <div id="add-task">
-    <form action="{{ url_for('addTrain') }}" method="post" class="form-contact">
-        <div class="task_title">Статус задания: </div>
-            <input class="task_input" type="text" name="status" value="" required />
-        <div class="task_title">Номер контракта: </div>
-            <input class="task_input" type="text" name="contract" value="" required />
-        <div class="task_title">Номер исполнителя: </div>
-            <input class="task_input" type="text" name="executor" value="" required />
-        <div class="task_title">Номер клиента: </div>
-            <input class="task_input" type="text" name="client" value="" required />
-        <div class="task_title">Код приоритета: </div>
-            <input class="task_input" type="text" name="priority" value="" required />
+    <form action="" method="post" class="form-contact">
+        <div class="task_title">Статус тренировки: </div>
+            <input class="task_input" type="text" name="status" value="" placeholder="True/False" required />
+        <div class="task_title">Дата: </div>
+            <input class="task_input" type="text" name="date" value="" placeholder="формат YY-MM-DD" required />
+        <div class="task_title">Время начала: </div>
+            <input class="task_input" type="text" name="start" value="" placeholder="формат hh:mm:ss" required />
+        <div class="task_title">Время окончания: </div>
+            <input class="task_input" type="text" name="finish" value="" placeholder="формат hh:mm:ss" required />
+        <div class="task_title">Номер группы: </div>
+            <input class="task_input" type="text" name="group" value="" required />
+        <div class="task_title">Номер тренера: </div>
+            <input class="task_input" type="text" name="trainer" value="" required />
         <div class="task_title">Описание: </div>
         <p><textarea name="description" rows=7 cols=40></textarea>
-        <p><input class="task-button" type="submit" value="Добавить задание" />
+        <p><input class="task-button" type="submit" value="Добавить тренировку." />
     </form>
 </div>
-    {% endfor %}
-{% if not admin %}
+    {% endif %}
+{% if not (admin or manager) %}
             <p>Доступ запрещен. Вернись на <a href="{{ url_for('index') }}">главную</a> страницу.
         {% endif %}
 {% endblock %}
