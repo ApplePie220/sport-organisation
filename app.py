@@ -3,6 +3,7 @@ from FDataBase import *
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from UserLogin import UserLogin
 from dotenv import load_dotenv
+import bcrypt
 import psycopg2
 import re
 import os
@@ -25,7 +26,7 @@ login_manager.login_message = "Пожалуйста, авторизуйтесь 
 login_manager.login_message_category = "success"
 user_is_manager = False  # отображение вкладки с добавл. задания только для менеджера
 user_id_admin = False # отображение вкладки с добавл. задания только для админа
-
+salt = bcrypt.gensalt(6, prefix=b"2a")
 
 # Подключение к бд
 def connection_db(user_log, user_pass):
@@ -69,16 +70,19 @@ def login():
     user = None
     if request.method == "POST":
         user_login = request.form.get('username')
-        enter_pass = request.form.get('psw')
-        if user_login and enter_pass:
+        if user_login and len(request.form['psw'])>0:
             db = connection_db(user_log=DB_USER, user_pass=DB_PASSWORD)
             with db:
-
+                with db.cursor(cursor_factory=DictCursor) as cursor:
+                    query = sql.SQL("SELECT employee_password "
+                                    "FROM employee WHERE employee_login = {logi}") \
+                        .format(logi=sql.Literal(user_login))
+                    cursor.execute(query)
+                    res = cursor.fetchone()
                 # сравниваем введенный пароль с паролем в бд
-                user_password_correct = getPassUserByLogin(user_login, enter_pass, db)
-
+                res['employee_password'] = res['employee_password'].encode('utf-8')
                 # если пароль верный, то создаем сессию этого пользователя
-                if user_password_correct:
+                if bcrypt.hashpw(request.form['psw'].encode('utf-8'), res['employee_password']) == res['employee_password']:
                     user = getUserByLogin(user_login, db)
                     userlogin = UserLogin().create(user)
 
@@ -86,8 +90,8 @@ def login():
                     rm = True if request.form.get('remainme') else False
                     login_user(userlogin, remember=rm)
                     session['current_user'] = user
-                    session['user_password'] = enter_pass
-                    return redirect(request.args.get("next") or url_for("profile"))
+                    session['user_password'] = request.form.get('psw')
+                    return redirect(url_for("profile"))
                 else:
                     flash("Введен неверный пароль.", "error")
 
@@ -104,20 +108,29 @@ def register():
     position_user = getPositionUser(session.get('current_user', SECRET_KEY)[0], db)
     user_id_admin = True if position_user['position_number'] == 3 else False
     if request.method == "POST":
-        with db:
-            if len(request.form['username']) > 0 and len(request.form['psw']) > 3 and \
-                    request.form['psw'] == request.form['psw2']:
-                res = addUser(request.form['firstname'],request.form['surname'],request.form['lastname'],
-                              request.form['email'],request.form['phone'],request.form['username'],
-                              request.form['psw'], request.form['expirience'], request.form['role'],
-                              db)
-                if res:
+        if len(request.form['firstname'])>0 and len(request.form['surname'])>0 and len(request.form['username'])>0\
+                and len(request.form['phone'])>0 and len(request.form['email'])>0 and len(request.form['psw'])>0\
+                and len(request.form['psw2'])>0 and len(request.form['expirience'])>0:
+            with db:
+                id_role = 0
+                if request.form['role'] == 'trainer':
+                    id_role = 2
+                if request.form['role'] == 'manager':
+                    id_role = 1
+                with db.cursor() as cursor:
+                    query = sql.SQL("CALL create_user({fn},{sn},{ln},{em},{ph},{lg},{psw},{exp},{role})") \
+                        .format(fn=sql.Literal(request.form.get('firstname')), sn=sql.Literal(request.form.get('surname')),
+                                ln=sql.Literal(request.form.get('lastname')),em=sql.Literal(request.form.get('email')),
+                                ph=sql.Literal(request.form.get('phone')), lg=sql.Literal(request.form.get('username')),
+                                psw=sql.Literal(request.form.get('psw')), exp=sql.Literal(request.form.get('expirience')),
+                                role=sql.Literal(id_role), )
+                    cursor.execute(query)
+                    db.commit()
                     flash('Работник успешно зарегистрирован.', 'success')
                     return redirect(url_for('index'))
-                else:
-                    flash('Ошибка при добавлении работника в бд.', 'error')
-            else:
-                flash('Неверно заполнены поля', 'error')
+
+        else:
+            flash('Неверно заполнены поля', 'error')
 
     return render_template('register.html', title="Регистрация работника.", admin = user_id_admin)
 
@@ -167,8 +180,10 @@ def equipment():
         position_user = getPositionUser(session.get('current_user', SECRET_KEY)[0], db)
         user_is_manager = True if position_user['position_number'] == 1 else False
         user_id_admin = True if position_user['position_number'] == 3 else False
-    return render_template('groups_list.html', equips=equips, admin=user_id_admin,
+    return render_template('equip_list.html', equips=equips, admin=user_id_admin,
                            manager=user_is_manager, title="Список оборудования.")
+
+
 
 @app.route('/add-group', methods=["POST", "GET"])
 @login_required

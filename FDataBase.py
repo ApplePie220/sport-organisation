@@ -1,6 +1,7 @@
 import psycopg2
 from psycopg2.extras import DictCursor
 from psycopg2 import sql
+import hashlib
 
 
 # получение всех доступных заданий из бд
@@ -117,7 +118,7 @@ def updateTrain(start, finish, date, group, trainer, description, db, train_id, 
                 cursor.execute(query)
             else:
                 query1 = sql.SQL("UPDATE training SET start_time = {startd},finish_time = {finishd},"
-                                "training_date = {dated},"
+                                "training_date = {dated}"
                                 "WHERE training_number = {train_num}") \
                     .format(startd=sql.Literal(start), finishd=sql.Literal(finish),
                             dated=sql.Literal(date),train_num=sql.Literal(train_id))
@@ -158,40 +159,40 @@ def addgroup(name, type, db):
 
 
 # добавление нового пользователя в бд
-def addUser(firstname, surname, lastname, email, phone, login, password, expirience, role, db):
-    try:
-        id_role = 0
-        if role == 'trainer':
-            id_role = 2
-        if role == 'manager':
-            id_role = 1
-        with db.cursor() as cursor:
-            query = sql.SQL("CALL create_user({fn},{sn},{ln},{em},{ph},{lg},{psw},{exp},{role})") \
-                .format(fn=sql.Literal(firstname),sn=sql.Literal(surname),ln=sql.Literal(lastname),
-                        em=sql.Literal(email),ph=sql.Literal(phone),lg=sql.Literal(login),
-                        psw=sql.Literal(password),exp=sql.Literal(expirience),role=sql.Literal(id_role),)
-            cursor.execute(query)
-            db.commit()
-    except Exception as e:
-        print(e)
-        print("Ошибка добавления пользователя в бд")
-        return False
-
-    return True
+# def addUser(firstname, surname, lastname, email, phone, login, password, expirience, role, db):
+#     try:
+#         id_role = 0
+#         if role == 'trainer':
+#             id_role = 2
+#         if role == 'manager':
+#             id_role = 1
+#         with db.cursor() as cursor:
+#             query = sql.SQL("CALL create_user({fn},{sn},{ln},{em},{ph},{lg},{psw},{exp},{role})") \
+#                 .format(fn=sql.Literal(firstname),sn=sql.Literal(surname),ln=sql.Literal(lastname),
+#                         em=sql.Literal(email),ph=sql.Literal(phone),lg=sql.Literal(login),
+#                         psw=sql.Literal(password),exp=sql.Literal(expirience),role=sql.Literal(id_role),)
+#             cursor.execute(query)
+#             db.commit()
+#     except Exception as e:
+#         print(e)
+#         print("Ошибка добавления пользователя в бд")
+#         return False
+#
+#     return True
 
 
 def getequips(db):
     try:
         with db.cursor(cursor_factory=DictCursor) as cursor:
-            cursor.execute("SELECT * FROM sport_equip_training")
+            cursor.execute("SELECT * FROM sport_equipment")
             res = cursor.fetchall()
             if not res:
-                print("Группы не найдены.")
+                print("Спортивное снаряжение не найдено.")
                 return False
             return res
     except Exception as e:
         print(e)
-        print("Ошибка получения спорт. групп из бд.")
+        print("Ошибка получения спотр. снаряжения из бд.")
     return False
 
 
@@ -235,26 +236,26 @@ def getUserByLogin(login, db):
 
 
 # получение пароля пользователя по его логину
-def getPassUserByLogin(login, pasw, db):
-    try:
-        with db.cursor(cursor_factory=DictCursor) as cursor:
-            query = sql.SQL("SELECT employee_password = crypt({passws}, employee_password) "
-                            "FROM employee WHERE employee_login = {logi}") \
-                .format(passws=sql.Literal(pasw),
-                        logi=sql.Literal(login))
-
-            cursor.execute(query)
-            res = cursor.fetchone()[0]
-            if not res:
-                print("Пользователь не найден.")
-                return False
-            return res
-
-    except Exception as e:
-        print(e)
-        print("Ошибка получения пользователя из бд.")
-
-    return False
+# def getPassUserByLogin(login, pasw, db):
+#     try:
+#         with db.cursor(cursor_factory=DictCursor) as cursor:
+#             query = sql.SQL("SELECT employee_password "
+#                             "FROM employee WHERE employee_login = {logi}") \
+#                 .format(passws=sql.Literal(pasw.decode()),
+#                         logi=sql.Literal(login))
+#
+#             cursor.execute(query)
+#             res = cursor.fetchone()[0]
+#             if not res:
+#                 print("Пользователь не найден.")
+#                 return False
+#             return res
+#
+#     except Exception as e:
+#         print(e)
+#         print("Ошибка получения пользователя из бд.")
+#
+#     return False
 
 
 # получение номера позиции пользователя
