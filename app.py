@@ -7,6 +7,7 @@ import psycopg2
 import re
 import os
 
+# подулючение виртуального окружения для получения секретных данных
 load_dotenv()
 SECRET_KEY = os.getenv('SECRET_KEY')
 DB_USER = os.getenv('DB_USER')
@@ -23,7 +24,7 @@ login_manager.login_view = 'login'
 login_manager.login_message = "Пожалуйста, авторизуйтесь  для доступа к закрытым страницам"
 login_manager.login_message_category = "success"
 user_is_manager = False  # отображение вкладки с добавл. задания только для менеджера
-user_id_admin = False
+user_id_admin = False # отображение вкладки с добавл. задания только для админа
 
 
 # Подключение к бд
@@ -230,17 +231,16 @@ def addTrain():
         user_id_admin = True if position_user['position_number'] == 3 else False
     if request.method == "POST":
         with db:
-            status = request.form.get('status')
             date = request.form.get('date')
             start = request.form.get('start')
             finish = request.form.get('finish')
             group = request.form.get('group')
             trainer = request.form.get('trainer')
             description = request.form.get('description')
-            if not (status or date or start or finish or group or trainer or description):
+            if not (date or start or finish or group or trainer or description):
                 flash("Заполните все поля", "error")
             else:
-                res = addtrain(status, date, start, finish, group, trainer, description, db)
+                res = addtrain(date, start, finish, group, trainer, description, db)
                 if not res:
                     flash('Ошибка добавления тренировки', category='error')
                 else:
@@ -291,8 +291,6 @@ def index():
         position_user = getPositionUser(session.get('current_user', SECRET_KEY)[0], db)
         user_is_manager = True if position_user['position_number'] == 1 else False
         user_id_admin = True if position_user['position_number'] == 3 else False
-        with db:
-            print("главная")
     return render_template('index.html', trainings=trainings,admin = user_id_admin,
                            manager=user_is_manager, title="Список тренировок")
 
@@ -313,7 +311,6 @@ def showTrain(id_train):
                     flash("Incorrect id.", "error")
                 else:
                     with db:
-                        status = request.form.get('status')
                         start = request.form.get('start')
                         finish = request.form.get('finish')
                         date = request.form.get('date')
@@ -323,10 +320,10 @@ def showTrain(id_train):
                             request.form.get('trainer')
                         description = 'null' if request.form.get('description') == 'None' else \
                             request.form.get('description')
-                        if not (status or start or finish or date or group or trainer or description):
+                        if not ( start or finish or date or group or trainer or description):
                             flash("Заполните все поля", "error")
                         else:
-                            updateTrain(status,start,finish,date,group,trainer,description, db,
+                            updateTrain(start,finish,date,group,trainer,description, db,
                                         id_train, user_is_manager, user_id_admin)
                             flash("Тренировка успешно изменена", "success")
                             return redirect(url_for('index'))

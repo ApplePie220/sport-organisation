@@ -1,5 +1,6 @@
 import psycopg2
 from psycopg2.extras import DictCursor
+from psycopg2 import sql
 
 
 # получение всех доступных заданий из бд
@@ -38,7 +39,8 @@ def findClientById(client_id, db):
     try:
         with db.cursor() as cursor:
 
-            cursor.execute(f'SELECT * FROM client WHERE client_number={client_id}')
+            cursor.execute("SELECT * FROM client WHERE client_number=%(client_number)s",
+                           {'client_number': client_id})
             res = cursor.fetchone()
             if res:
                 return res
@@ -48,12 +50,16 @@ def findClientById(client_id, db):
 
     return False
 
+
 # добавление новой тренировки в бд
-def addclient(firstname, surname, lastname,phone, mail, address,date,group, db):
+def addclient(firstname, surname, lastname, phone, mail, address, date, group, db):
     try:
         with db.cursor() as cursor:
-            cursor.execute("CALL add_client_transaction(%s,%s,%s,%s,%s,%s,%s,%s)",
-                           (firstname, surname, lastname,phone, mail, address,date, group))
+            query1 = sql.SQL("CALL add_client_transaction({fn},{sn},{ln},{ph},{em},{adr},{dt},{grr})") \
+                .format(fn=sql.Literal(firstname), sn=sql.Literal(surname), ln=sql.Literal(lastname),
+                        ph=sql.Literal(phone), em=sql.Literal(mail), adr=sql.Literal(address),
+                        dt=sql.Literal(date), grr=sql.Literal(group))
+            cursor.execute(query1)
             db.commit()
     except Exception as e:
         print("Ошибкад добавления клиента." + e)
@@ -63,11 +69,14 @@ def addclient(firstname, surname, lastname,phone, mail, address,date,group, db):
 
 
 # добавление новой тренировки в бд
-def addtrain(status, date, start, finish, group, trainer, description, db):
+def addtrain(date, start, finish, group, trainer, description, db):
     try:
         with db.cursor() as cursor:
-            cursor.execute("CALL add_training(%s,%s,%s,%s,%s,%s,%s)",
-                           (date, start, finish, status, description, group, trainer))
+            query1 = sql.SQL("CALL add_training({dat},{strt},{fnsh},{descr},{gr},{tr})") \
+                .format(dat=sql.Literal(date), strt=sql.Literal(start),fnsh=sql.Literal(finish),
+                        descr=sql.Literal(description), gr=sql.Literal(group),
+                        tr=sql.Literal(trainer))
+            cursor.execute(query1)
             db.commit()
     except Exception as e:
         print("Ошибкад добавления тренировки " + e)
@@ -80,7 +89,7 @@ def addtrain(status, date, start, finish, group, trainer, description, db):
 def getTrain(id, db):
     try:
         with db.cursor() as cursor:
-            cursor.execute("SELECT * FROM training WHERE training_number =%(training_number)s",
+            cursor.execute("SELECT * FROM training WHERE training_number = %(training_number)s",
                            {'training_number': id})
             res = cursor.fetchone()
             if res:
@@ -92,19 +101,27 @@ def getTrain(id, db):
 
 
 #  для менеджера и обычного сотрудника функции изменения задания разные.
-def updateTrain(stat,start,finish,date,group,trainer,description, db, train_id, is_manager, is_admin):
+def updateTrain(start, finish, date, group, trainer, description, db, train_id, is_manager, is_admin):
     try:
         with db.cursor() as cursor:
             if is_manager or is_admin:
-                cursor.execute(f'''UPDATE training SET start_time = '{start}',
-                                finish_time = '{finish}',training_date = '{date}',
-                                status = '{stat}',training_name = '{description}',
-                                group_number = '{group}',trainer_number = '{trainer}'
-                                 WHERE training_number = '{train_id}' ''')
+                query = sql.SQL("UPDATE training SET start_time = {startd},finish_time = {finishd},"
+                                "training_date = {dated},training_name = {descriptions},"
+                                "group_number = {groupn},trainer_number = {trainern} "
+                                "WHERE training_number = {train_num}") \
+                    .format(startd=sql.Literal(start), finishd=sql.Literal(finish),
+                            dated=sql.Literal(date),descriptions=sql.Literal(description),
+                            groupn=sql.Literal(group),trainern=sql.Literal(trainer),
+                            train_num=sql.Literal(train_id))
+
+                cursor.execute(query)
             else:
-                cursor.execute(f'''UPDATE training SET start_time = '{start}',
-                                finish_time = '{finish}',training_date = '{date}',
-                                status = '{stat}' WHERE training_number = '{train_id}' ''')
+                query1 = sql.SQL("UPDATE training SET start_time = {startd},finish_time = {finishd},"
+                                "training_date = {dated},"
+                                "WHERE training_number = {train_num}") \
+                    .format(startd=sql.Literal(start), finishd=sql.Literal(finish),
+                            dated=sql.Literal(date),train_num=sql.Literal(train_id))
+                cursor.execute(query1)
         db.commit()
     except Exception as e:
         print(e)
@@ -125,20 +142,23 @@ def getgroups(db):
         print("Ошибка получения спорт. групп из бд.")
     return False
 
-def addgroup(name,type, db):
+
+def addgroup(name, type, db):
     try:
         with db.cursor() as cursor:
-            cursor.execute("CALL add_group(%s,%s)",
-                           (name,type))
+            query = sql.SQL("CALL add_group({nam},{typ})") \
+                .format(nam=sql.Literal(name), typ=sql.Literal(type))
+            cursor.execute(query)
             db.commit()
     except Exception as e:
-        print("Ошибкад добавления тренировки " + e)
+        print("Ошибка добавления группы" + e)
         return False
 
     return True
 
+
 # добавление нового пользователя в бд
-def addUser(firstname, surname, lastname, email, phone, login, password,expirience, role, db):
+def addUser(firstname, surname, lastname, email, phone, login, password, expirience, role, db):
     try:
         id_role = 0
         if role == 'trainer':
@@ -146,9 +166,11 @@ def addUser(firstname, surname, lastname, email, phone, login, password,expirien
         if role == 'manager':
             id_role = 1
         with db.cursor() as cursor:
-            cursor.execute("CALL create_user(%s,%s,%s,%s,%s,%s,%s,%s,%s)", (firstname, surname, lastname, email,
-                                                                   phone, login, password,expirience,
-                                                                   id_role))
+            query = sql.SQL("CALL create_user({fn},{sn},{ln},{em},{ph},{lg},{psw},{exp},{role})") \
+                .format(fn=sql.Literal(firstname),sn=sql.Literal(surname),ln=sql.Literal(lastname),
+                        em=sql.Literal(email),ph=sql.Literal(phone),lg=sql.Literal(login),
+                        psw=sql.Literal(password),exp=sql.Literal(expirience),role=sql.Literal(id_role),)
+            cursor.execute(query)
             db.commit()
     except Exception as e:
         print(e)
@@ -156,6 +178,7 @@ def addUser(firstname, surname, lastname, email, phone, login, password,expirien
         return False
 
     return True
+
 
 def getequips(db):
     try:
@@ -170,7 +193,6 @@ def getequips(db):
         print(e)
         print("Ошибка получения спорт. групп из бд.")
     return False
-
 
 
 # получение пользователя из бд по его Id
@@ -216,8 +238,12 @@ def getUserByLogin(login, db):
 def getPassUserByLogin(login, pasw, db):
     try:
         with db.cursor(cursor_factory=DictCursor) as cursor:
-            cursor.execute(f'''SELECT employee_password = crypt('{pasw}', employee_password) 
-                                FROM employee WHERE employee_login = '{login}' ''')
+            query = sql.SQL("SELECT employee_password = crypt({passws}, employee_password) "
+                            "FROM employee WHERE employee_login = {logi}") \
+                .format(passws=sql.Literal(pasw),
+                        logi=sql.Literal(login))
+
+            cursor.execute(query)
             res = cursor.fetchone()[0]
             if not res:
                 print("Пользователь не найден.")
@@ -254,7 +280,11 @@ def getPositionUser(user_id, db):
 def get_report_task(path, start, finish, db):
     try:
         with db.cursor() as cursor:
-            cursor.execute(f'''CALL export_data_training_csv('{start}','{finish}','{path}')''')
+            query = sql.SQL("CALL export_data_training_csv({startd},{finishd},{paths})") \
+                .format(startd=sql.Literal(start),
+                        finishd=sql.Literal(finish),
+                        paths=sql.Literal(path))
+            cursor.execute(query)
 
     except Exception as e:
         print(e)
