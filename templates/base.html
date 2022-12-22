@@ -14,28 +14,28 @@
 <body>
 {% block content -%}
     {%- block mainmenu -%}
-    <ul class="mainmenu">
+    <div class="mainmenu">
         {% if not current_user.is_authenticated %}
-            <li> <a href="{{ url_for('login') }}">Авторизация</a> </li>
+            <div class="menu">  <a href="{{ url_for('login') }}">Авторизация</a> </div>
         {% endif %}
         {% if current_user.is_authenticated %}
-            <li> <a href="{{ url_for('index') }}">Тренировки</a> </li>
+            <div class="menu"> <a href="{{ url_for('index') }}">Тренировки</a> </div>
         {% endif %}
         {% if current_user.is_authenticated and manager%}
-            <li> <a href="{{ url_for('addTrain') }}">Добавить тренировку</a> </li>
-            <li> <a href="{{ url_for('generate_train_report') }}">Отчет тренировок</a> </li>
+            <div class="menu"> <a href="{{ url_for('addTrain') }}">Добавить тренировку</a> </div>
+            <div class="menu"> <a href="{{ url_for('generate_train_report') }}">Отчет тренировок</a> </div>
         {% endif %}
         {% if current_user.is_authenticated and admin%}
-            <li> <a href="{{ url_for('clients') }}">Клиенты</a> </li>
-            <li> <a href="{{ url_for('addClient') }}">Добавить клиента</a> </li>
-            <li> <a href="{{ url_for('register') }}">Добавить сотрудника</a> </li>
-            <li> <a href="{{ url_for('equipment') }}">Спорт. оборудование</a> </li>
-            <li> <a href="{{ url_for('groups') }}">Спорт. группы</a> </li>
+            <div class="menu"> <a href="{{ url_for('clients') }}">Клиенты</a> </div>
+            <div class="menu"> <a href="{{ url_for('addClient') }}">Добавить клиента</a> </div>
+            <div class="menu"> <a href="{{ url_for('register') }}">Добавить сотрудника</a> </div>
+            <div class="menu"> <a href="{{ url_for('equipment') }}">Спорт. оборудование</a> </div>
+            <div class="menu"> <a href="{{ url_for('groups') }}">Спорт. группы</a> </div>
         {% endif %}
         {% if current_user.is_authenticated %}
-            <li> <a href="{{ url_for('profile') }}">Профиль</a> </li>
+            <div class="menu"> <a href="{{ url_for('profile') }}">Профиль</a> </div>
         {% endif %}
-    </ul>
+    </div>
     {% endblock mainmenu -%}
     <div class="clear"></div>
 

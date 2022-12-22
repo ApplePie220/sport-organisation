@@ -2,9 +2,7 @@
 
 {% block content %}
 {{ super() }}
-{% for cat, msg in get_flashed_messages(True) %}
-        <div  class="flash {{ cat }}">{{ msg }}</div>
-        {% endfor %}
+
     {% if admin %}
     <div id="add-task">
         <div class="current-task">

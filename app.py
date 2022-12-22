@@ -86,7 +86,7 @@ def login():
                     login_user(userlogin, remember=rm)
                     session['current_user'] = user
                     session['user_password'] = enter_pass
-                    return redirect(request.args.get("next") or url_for("profile"))
+                    return redirect(url_for("profile"))
                 else:
                     flash("Введен неверный пароль.", "error")
 
@@ -134,10 +134,10 @@ def clients():
                 client_id = request.form.get('id')
                 check_correct_id = re.findall(r"[^0-9]", client_id)
                 if check_correct_id:
-                    flash("Введите корректный id.", "error")
+                    flash("Введите корректный id", "error")
                 else:
                     if not client_id:
-                        flash("Введите id клиента для поиска.", "error")
+                        flash("Введите id клиента для поиска", "error")
                     else:
                         return redirect(url_for('showClient', id_client=client_id))
         clients_list = getClientAnounce(db)
@@ -154,7 +154,7 @@ def groups():
         position_user = getPositionUser(session.get('current_user', SECRET_KEY)[0], db)
         user_id_admin = True if position_user['position_number'] == 3 else False
     return render_template('groups_list.html', groups=group, admin=user_id_admin,
-                           title="Список спортивных групп.")
+                           title="Список спортивных групп")
 
 
 @app.route('/equipments')
@@ -166,7 +166,7 @@ def equipment():
         position_user = getPositionUser(session.get('current_user', SECRET_KEY)[0], db)
         user_id_admin = True if position_user['position_number'] == 3 else False
     return render_template('equip_list.html', equips=equips, admin=user_id_admin,
-                           title="Список спорт. оборудования.")
+                           title="Список спорт. оборудования")
 
 @app.route('/equip/<int:id_equip>/edit', methods=["POST", "GET"])
 @login_required
@@ -193,7 +193,7 @@ def editEquip(id_equip):
                         return redirect(url_for('equipment'))
         else:
             equipment = getequip(id_equip,db)
-    return render_template('edit_equip.html', admin=user_id_admin, title='Изменение спорт. оборудования',
+    return render_template('edit_equip.html', admin=user_id_admin, title='Редактор спорт. оборудования',
                            equip=equipment)
 
 @app.route('/add-group', methods=["POST", "GET"])
@@ -216,7 +216,7 @@ def addGroup():
                 else:
                     flash('Группа успешно добавлена', category='succes')
             return redirect(url_for('groups'))
-    return render_template('add_group.html', admin=user_id_admin, title='Добавление группы.')
+    return render_template('add_group.html', admin=user_id_admin, title='Добавление группы')
 
 
 # Отображение клиента, которого вводишь в поиске
@@ -227,7 +227,7 @@ def showClient(id_client):
     if 'current_user' in session:
         check_correst_id = re.findall(r"[^0-9]", str(id_client))
         if check_correst_id:
-            flash("Введите корректный id.", "error")
+            flash("Введите корректный id", "error")
         else:
             db = connection_db(session.get('current_user', SECRET_KEY)[6], session.get('user_password', SECRET_KEY))
             position_user = getPositionUser(session.get('current_user', SECRET_KEY)[0], db)
@@ -235,7 +235,7 @@ def showClient(id_client):
             with db:
                 client = findClientById(id_client, db)
                 if not client:
-                    flash("Клиент с таким id не найден или не существует.", "error")
+                    flash("Клиент с таким id не найден или не существует", "error")
                     return redirect(url_for('clients'))
 
     return render_template('client.html', admin=user_id_admin, client=client, title="Информация о клиенте")
@@ -284,7 +284,7 @@ def editClient(id_client):
                 client = getClient(id_client, db)
 
     return render_template('edit_client.html', admin=user_id_admin, client=client,
-                           title="Редактор клиента.")
+                           title="Редактор клиента")
 
 # добавление задания
 @app.route('/add-train', methods=["POST", "GET"])
@@ -360,11 +360,11 @@ def addClient():
             else:
                 res = addclient(firstname, surname, lastname, phone, mail, address, date, group, db)
                 if not res:
-                    flash('Ошибка добавления клиента.', category='error')
+                    flash('Ошибка добавления клиента', category='error')
                 else:
-                    flash('Клиент успешно добавлен.', category='succes')
+                    flash('Клиент успешно добавлен', category='succes')
             return redirect(url_for('clients'))
-    return render_template('add_client.html', groups=groups, admin=user_id_admin, title='Добавление клиента.')
+    return render_template('add_client.html', groups=groups, admin=user_id_admin, title='Добавление клиента')
 
 # отображение всех доступных заданий для пользователя
 @app.route('/index')

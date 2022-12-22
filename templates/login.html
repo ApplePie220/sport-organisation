@@ -17,26 +17,34 @@
     <div  class="flash {{ cat }}">{{ msg }}</div>
     {% endfor %}
 
-    <div id="log_form">
-    <h1>Авторизация</h1>
+    <div class="container">
+	    <div class="screen">
+		    <div class="screen__content">
+                <form action="" method="post" class="form-contact">
+                        <div class="login_field">
+                                <input type="text" class="login_input" name="username" placeholder="Логин" value="" required >
+                        </div>
+                        <div class="login_field">
+                                <input type="password" class="login_input" name="psw" placeholder="Пароль" value="" required >
+                        </div>
+                        <div>
+                            <input type="checkbox" name="remainme" />
+                            <span class="log_rem">Запомнить меня</span>
+                        </div>
+                        <div>
+                            <input class="log_button" type="submit" value="Войти" />
+                        </div>
+                </form>
+            </div>
 
-    <form action="" method="post" class="form-contact">
-        <ul class="log_list">
-            <li>
-            <div class="reg_title">Логин:</div>
-                <input class="log_input" type="text" name="username" value="" required/>
-            </li>
-            <li>
-            <div class="reg_title">Пароль:</div>
-            <input class="log_input" type="password" name="psw" value="" required/>
-            </li>
-            <li>
-            <input type="checkbox" name="remainme" />
-                <span class="log_rem">Запомнить меня</span>
-            </li>
-        </ul>
-        <div><input class="log_button" type="submit" value="Войти" /></div>
-    </form>
-</div>
+            <div class="screen__background">
+                <span class="screen__background__shape screen__background__shape4"></span>
+                <span class="screen__background__shape screen__background__shape3"></span>
+                <span class="screen__background__shape screen__background__shape2"></span>
+                <span class="screen__background__shape screen__background__shape1"></span>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>

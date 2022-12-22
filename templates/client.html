@@ -5,20 +5,27 @@
         <div  class="flash {{ cat }}">{{ msg }}</div>
         {% endfor %}
         {% if admin %}
-        <div class="list-posts">
+
         <div class="client">
-            <p class="title"><label>Id клиента: </label> {{ client[0]}}</p>
-            <p class="annonce">Имя: {{ client[1] }}</p>
-            <p class="annonce">Фамилия: {{ client[2] }}</p>
-            <p class="annonce">Отчество: {{ client[3]}}</p>
-            <p class="annonce">Номер: {{ client[4]}}</p>
-            <p class="annonce">Почта: {{ client[5]}}</p>
-            <p class="annonce">Дата рождения: {{ client[7]}}</p>
-            <p class="annonce">Адрес: {{ client[6]}}</p>
-            <div><button onclick="document.location='{{ url_for('deleteClient', id_client=client[0]) }}'">Удалить</button></div>
-            <div><button onclick="document.location='{{ url_for('editClient', id_client=client[0]) }}'">Редактировать</button></div>
+            <div class="title"><label>Id клиента: </label> {{ client[0]}}</div>
+            <div class="annonce">Имя: {{ client[1] }}</div>
+            <div class="annonce">Фамилия: {{ client[2] }}</div>
+            <div class="annonce">Отчество: {{ client[3]}}</div>
+            <div class="annonce">Номер: {{ client[4]}}</div>
+            <div class="annonce">Почта: {{ client[5]}}</div>
+            <div class="annonce">Дата рождения: {{ client[7]}}</div>
+            <div class="annonce">Адрес: {{ client[6]}}</div>
+
+            <div class="butt_client">
+                <div>
+                  <button class="del_but" onclick="document.location='{{ url_for('deleteClient', id_client=client[0]) }}'">Удалить</button>
+                </div>
+                <div>
+                    <button class="change_but" onclick="document.location='{{ url_for('editClient', id_client=client[0]) }}'">Редактировать</button>
+                </div>
+            </div>
         </div>
-        </div>
+
         {% endif %}
         {% if not admin %}
             <p>Доступ запрещен. Вернись на <a href="{{ url_for('index') }}">главную</a> страницу.

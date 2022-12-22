@@ -9,15 +9,20 @@
 
         <div class="list-posts">
             {% for train in trainings %}
-                <div class="task">
-                    <div class="title">Id тренировки:  <a href="{{ url_for('showTrain', id_train=train[0]) }}">{{ train[0] }}</a></div>
-                    <div class="annonce">Дата и время начала: {{ train[1] }}</div>
-                    <div class="annonce">Дата и время окончания: {{ train[2] }}</div>
-                    <div class="annonce">Проведена тренировка? {{ train[3]}}</div>
-                    <div class="annonce">Номер группы: {{ train[5]}}</div>
-                    <div class="annonce">Используемое спорт. оборудование: {{ train[7] }}</div>
-                    <div class="annonce">Описание: {{ train[4]}}</div>
-                </div>
+                <a href="{{ url_for('showTrain', id_train=train[0]) }}">
+                    <div class="task">
+                        <div class="title">Id тренировки: {{ train[0] }}</div>
+                        <div class="annonce">Дата и время начала: {{ train[1] }}</div>
+                        <div class="annonce">Дата и время окончания: {{ train[2] }}</div>
+                        <div class="annonce">Проведена тренировка? {{ train[3]}}</div>
+                        <div class="annonce">Номер группы: {{ train[5]}}</div>
+                        {% if admin or manager %}
+                            <div class="annonce">Номер тренера: {{ train[6]}}</div>
+                        {% endif %}
+                        <div class="annonce">Используемое спорт. оборудование: {{ train[7] }}</div>
+                        <div class="annonce">Описание: {{ train[4]}}</div>
+                    </div>
+                </a>
             {% endfor %}
         </div>
     {% endblock %}

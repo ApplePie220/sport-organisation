@@ -7,15 +7,19 @@
         <div  class="flash {{ cat }}">{{ msg }}</div>
         {% endfor %}
         {% if admin %}
-            <div><button onclick="document.location='{{ url_for('addEquip') }}'">Добавить оборудование</button></div>
+            <div>
+                <button class="add_smth" onclick="document.location='{{ url_for('addEquip') }}'">Добавить оборудование</button>
+            </div>
         <div class="list-posts">
             {% for equip in equips %}
-                <div class="task">
-                    <div class="title">Id оборудования: <a href="{{ url_for('editEquip', id_equip=equip[0]) }}">{{ equip[0] }}</a></div>
-                    <div class="annonce">Код поставщика: {{ equip[2] }}</div>
-                    <div class="annonce">Название: {{ equip[1] }}</div>
-                    <div class="annonce">Количество: {{ equip[3] }}</div>
-                </div>
+                <a href="{{ url_for('editEquip', id_equip=equip[0]) }}">
+                    <div class="task">
+                        <div class="title">Id оборудования: {{ equip[0] }}</div>
+                        <div class="annonce">Код поставщика: {{ equip[2] }}</div>
+                        <div class="annonce">Название: {{ equip[1] }}</div>
+                        <div class="annonce">Количество: {{ equip[3] }}</div>
+                    </div>
+                </a>
             {% endfor %}
         </div>
         {% endif %}

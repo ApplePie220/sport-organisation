@@ -1,44 +1,52 @@
 html, body {
     font: 100% "Trebuchet MS", sans-serif;
-    color: #670046;
-    background: #ffe5f7;
+    color: #442000;
+    background: #f5d29b;
 }
 
 .clear {
     clear: both;
 }
 
-ul.mainmenu {
+.mainmenu {
     list-style: none;
-    background: #830632;
+    background: #7a4314;
     height: 60px;
     margin: 0;
     padding: 0;
-    font-size: 20px;
+    font-size: 17px;
     overflow: hidden;
 
 }
 
-ul.mainmenu li {
+.mainmenu {
     float: left;
-    margin: 18px 40px 0 50px;
+    margin: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
 }
 
-ul.mainmenu li.last {float: right}
+.mainmenu .last {float: right}
 
-ul.mainmenu li a{
-    color: #ffe5f7;
+.mainmenu  a{
+    color: #fff1e2;
     text-decoration: none;
 }
 
-ul.mainmenu li a:hover{
-    color: #f89ad8;
+.mainmenu a:hover{
+    color: #daae84;
+}
+
+.menu{
+    margin: auto;
 }
 
 div.content h1 {
     width: auto;
     text-align: center;
-
+    font-size: 20px;
 }
 
 .list-posts{
@@ -53,25 +61,30 @@ div.content h1 {
     width: 400px;
     border-radius: 8px;
     font-family: 'Montserrat', sans-serif;
-    background-color: #fcaae3;
-    color: #830632;
-    box-shadow: 5px 5px 10px #494346;
+    background-color: #c39964;
+    color: #4b2601;
+    box-shadow: 5px 5px 10px #594121;
+    margin: 20px 20px 20px 20px;
+    cursor: pointer;
+}
+.list-posts .group{
+    width: 400px;
+    border-radius: 8px;
+    font-family: 'Montserrat', sans-serif;
+    background-color: #c39964;
+    color: #4b2601;
+    box-shadow: 5px 5px 10px #594121;
     margin: 20px 20px 20px 20px;
 }
-
 .task a{
-    color: #480075;
+    color: #492905;
     text-decoration: underline;
-}
-
-.task a:hover{
-    color: #830632;
 }
 
 .list-posts .title {
     margin: 0;
     padding: 10px;
-    background: #fcddff;
+    background: #f8edd4;
     border-radius: 8px;
 }
 
@@ -84,35 +97,80 @@ div.content h1 {
     width: 400px;
     border-radius: 8px;
     font-family: 'Montserrat', sans-serif;
-    background-color: #fcaae3;
-    color: #830632;
+    background-color: #c39964;
+    color: #4b2601;
     box-shadow: 5px 5px 10px #494346;
     margin: 20px 20px 20px 20px;
+    cursor: pointer;
 }
 
-.list-posts .client{
-    width: 400px;
+.list-posts a{
+    text-decoration: none;
+}
+
+
+.client{
+    width: 450px;
+    margin: 20px auto 0 auto;
+    background: #c39964;
+    box-shadow: 5px 5px 10px #332b1e;
     border-radius: 8px;
-    font-family: 'Montserrat', sans-serif;
-    background-color: #fcaae3;
-    color: #830632;
-    box-shadow: 5px 5px 10px #494346;
-    margin: 20px 20px 20px 20px;
+}
+
+.client .annonce{
+    margin: 0;
+    padding: 5px 10px 5px 10px;
+}
+
+.client .title{
+    margin: 0;
+    padding: 10px;
+    background: #f8edd4;
+    border-radius: 8px;
+}
+
+.butt_client{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+
+}
+
+.del_but{
+    font-size: 12px;
+    border-radius: 4px;
+    border: 3px solid #281300;
+    background: #6e1400;
+    color: white;
+    margin: 10px 0 10px 10px;
+    padding: 5px;
+    cursor: pointer;
+}
+
+.change_but{
+    font-size: 12px;
+    border-radius: 4px;
+    border: 3px solid #281300;
+    background: #6e3800;
+    color: white;
+    margin: 10px 0 10px 10px;
+    padding: 5px;
+    cursor: pointer;
 }
 
 #report-form {
     width: 350px;
     margin: 20px auto 0 auto;
     padding: 10px;
-    background: #fcaae3;
-    box-shadow: 5px 5px 10px #494346;
+    background: #c39964;
+    box-shadow: 5px 5px 10px #4d483f;
     border-radius: 8px;
 }
 
 .report {
     width: 200px;
     border: none;
-    background: #fcaae3;
+    background: #c39964;
     font-size: 16px;
     padding: 0 0 0 20px;
 }
@@ -120,8 +178,8 @@ div.content h1 {
 .rep_button {
     font-size: 16px;
     border-radius: 4px;
-    border: 3px solid #520320;
-    background: #830632;
+    border: 3px solid #522901;
+    background: #6e3800;
     color: white;
     margin: 10px 0 10px 10px;
     padding: 1% 30%;
@@ -130,8 +188,8 @@ div.content h1 {
 form .search {
     width: auto;
     margin: 50px auto auto 600px;
-    background: #ffe5f7;
-    border: 1px solid #830632;
+    background: #fcf0e9;
+    border: 1px solid #6e3800;
     display: inline-block;
     border-radius: 3px;
     font-size: 20px;
@@ -146,29 +204,29 @@ input {
 form button{
     width: 40px;
     height: 25px;
-    background: #fa6497;
-    color: #570120;
-    border: 1px solid #830632;
+    background: #ce7d2e;
+    color: #522901;
+    border: 1px solid #6e3800;
     border-radius: 3px;
 }
 
 form button:hover{
-    background: #fcaae3;
+    background: #E0CFB1;
 }
 
 #prof_form {
     width: 300px;
     margin: 20px auto 0 auto;
     padding: 10px;
-    background: #fcaae3;
-    box-shadow: 5px 5px 10px #494346;
+    background: #c39964;
+    box-shadow: 5px 5px 10px #625e5b;
     border-radius: 8px;
 }
 ul.profile-info {
     list-style: none;
     padding: 0;
     margin: 20px 20px 20px 20px;
-    color: #830632;
+    color: #4b2601;
 }
 
 ul.profile-info li {
@@ -177,13 +235,18 @@ ul.profile-info li {
 
 #prof_form p{
     padding-top: 10px;
-    border-top: 1px solid #46021b;
+    border-top: 1px solid #462301;
     text-align: center;
 
 }
 
+#prof_form a{
+    color: #331901;
+    text-decoration: underline;
+}
+
 #prof_form a:hover {
-    color: #830632;
+    color: #934c01;
     text-decoration: underline;
 }
 
@@ -191,16 +254,16 @@ ul.profile-info li {
     width: 450px;
     margin: 20px auto 0 auto;
     padding: 10px;
-    background: #fcaae3;
-    box-shadow: 5px 5px 10px #494346;
+    background: #c39964;
+    box-shadow: 5px 5px 10px #332b1e;
     border-radius: 8px;
 }
 
 .task-button{
     font-size: 16px;
     border-radius: 4px;
-    border: 3px solid #520320;
-    background: #830632;
+    border: 3px solid #281300;
+    background: #6e3800;
     color: white;
     margin: 10px 0 10px 10px;
     padding: 1% 31%;
@@ -214,9 +277,28 @@ form .task_title {
 input.task_input{
     width: 200px;
     border: none;
-    border-bottom: 1px solid #7a0132;
+    border-bottom: 1px solid #522901;
     font-size: 16px;
     margin: 5px auto auto 20px;
+}
+
+.add_smth{
+    background: #fff;
+	font-size: 14px;
+	margin-top: 30px;
+	padding: 16px 20px;
+	border-radius: 26px;
+	border: 1px solid #e8dfd3;
+	text-transform: uppercase;
+	font-weight: 700;
+	display: flex;
+    justify-content: center;
+	align-items: center;
+	width: 100%;
+	color: #522901;
+	box-shadow: 0px 2px 2px #d97706;
+	cursor: pointer;
+	transition: 2s;
 }
 
 .form-contact p {margin: 10px 0 10px 0;}
@@ -229,14 +311,14 @@ input.task_input{
 }
 
 .flash.success{
-    background: #6b91f6;
+    background: #287233;
     color: white;
     font-size: 18px;
     text-align: center;
 }
 
 .flash.error {
-    background: #a80b43;
+    background: #af310c;
     color: white;
     font-size: 18px;
     text-align: center;
