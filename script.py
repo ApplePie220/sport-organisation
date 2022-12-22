@@ -1,3 +1,5 @@
+import random
+
 from mimesis import Person, Address, Generic
 from mimesis.locales import Locale
 import psycopg2
@@ -21,7 +23,7 @@ person = Person(locale=Locale.RU)
 de = Address(locale=Locale.RU)
 generic = Generic(Locale.RU)
 db = connect()
-for i in range(1,600):
+for i in range(1,300):
     with db.cursor() as cursor:
         firstname = person.first_name()
         lastname = person.last_name()
@@ -30,7 +32,9 @@ for i in range(1,600):
         email = person.email(domains=['example.com'])
         date = generic.datetime.date()
         address = "г. " + de.city() + ", " + de.address()
-        cursor.execute("CALL add_client(%s,%s,%s,%s,%s,%s,%s)",(firstname, lastname,surname,phone,email, address, date))
+        group = random.randint(1,5)
+        cursor.execute("CALL add_client_transaction(%s,%s,%s,%s,%s,%s,%s)",
+                       (firstname, lastname,surname,phone,email, address, date, group))
         db.commit()
 
 db.close()
