@@ -1,0 +1,34 @@
+{%  extends 'base.html' %}
+
+{% block content %}
+{{ super() }}
+
+    {% if admin %}
+    <div id="add-task">
+        <div class="current-task">
+        <div class="task-id">
+            <h3>Номер клиента: {{ client[0] }}</h3>
+            </div>
+        </div>
+         <form action="" method="post" class="form-contact">
+             <div class="task_title">Имя: </div>
+                    <input class="task_input" type="text" name="first" value="{{ client[1] }}" required />
+             <div class="task_title">Фамилия: </div>
+                    <input class="task_input" type="text" name="sur" value="{{ client[2] }}" required />
+             <div class="task_title">Отчество: </div>
+                    <input class="task_input" type="text" name="last" value="{{ client[3] }}" required />
+             <div class="task_title">Телефон: </div>
+                    <input class="task_input" type="text" name="phone" value="{{ client[4] }}" required />
+             <div class="task_title">Почта: </div>
+                    <input class="task_input" type="text" name="email" value="{{ client[5] }}" required />
+             <div class="task_title">Адрес: </div>
+                    <input class="task_input" type="text" name="address" value="{{ client[6] }}" required />
+
+             <p><input class="task-button" type="submit" value="Изменить клиента" />
+         </form>
+    </div>
+    {% endif %}
+    {% if not admin %}
+            <p>Доступ запрещен. Вернись на <a href="{{ url_for('index') }}">главную</a> страницу.
+    {% endif %}
+{% endblock %}

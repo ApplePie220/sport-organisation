@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{{ super() }}
+    {% if admin  %}
+<div id="add-task">
+    <form action="" method="post" class="form-contact">
+        <div class="task_title">Название оборужования: </div>
+            <input class="task_input" type="text" name="name" placeholder="Пример: Большие ракетки" value="" required />
+        <div class="task_title">Код поставщика: </div>
+            <input class="task_input" type="text" name="code" placeholder="Пример: 485938" value="" required />
+        <div class="task_title">Количество: </div>
+            <input class="task_input" type="text" name="amount" placeholder="Пример: 123" value="" required />
+        <p><input class="task-button" type="submit" value="Добавить Оборудование" />
+    </form>
+</div>
+    {% endif %}
+{% if not admin %}
+            <p>Доступ запрещен. Вернись на <a href="{{ url_for('index') }}">главную</a> страницу.
+        {% endif %}
+{% endblock %}

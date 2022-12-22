@@ -18,6 +18,13 @@
             <input class="task_input" type="text" name="group" value="" required />
         <div class="task_title">Номер тренера: </div>
             <input class="task_input" type="text" name="trainer" value="" required />
+        <div class="task_title">Спорт. оборудование:
+            <select class="reg_select" name="equip">
+                {% for equip in equips %}
+                <option value="{{ equip[0] }}">{{ equip[1] }}</option>
+                {% endfor %}
+            </select>
+            </div>
         <div class="task_title">Описание: </div>
         <p><textarea name="description" rows=7 cols=40></textarea>
         <p><input class="task-button" type="submit" value="Добавить тренировку." />

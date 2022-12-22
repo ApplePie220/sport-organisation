@@ -1,0 +1,30 @@
+{%  extends 'base.html' %}
+
+{% block content %}
+{{ super() }}
+{% for cat, msg in get_flashed_messages(True) %}
+        <div  class="flash {{ cat }}">{{ msg }}</div>
+        {% endfor %}
+    {% if admin %}
+    <div id="add-task">
+        <div class="current-task">
+        <div class="task-id">
+            <h3>Номер спорт. оборудования: {{ equip[0] }}</h3>
+            </div>
+        </div>
+         <form action="" method="post" class="form-contact">
+             <div class="task_title">Название: </div>
+                    <input class="task_input" type="text" name="name" value="{{ equip[1] }}" required />
+             <div class="task_title">Код поставщика: </div>
+                    <input class="task_input" type="text" name="code" value="{{ equip[2] }}" required />
+             <div class="task_title">Количество: </div>
+                    <input class="task_input" type="text" name="amount" value="{{ equip[3] }}" required />
+
+             <p><input class="task-button" type="submit" value="Изменить оборудование" />
+         </form>
+    </div>
+    {% endif %}
+    {% if not admin %}
+            <p>Доступ запрещен. Вернись на <a href="{{ url_for('index') }}">главную</a> страницу.
+    {% endif %}
+{% endblock %}

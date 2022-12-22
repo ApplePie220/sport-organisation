@@ -17,7 +17,7 @@
         <div class="list-posts">
         {% for client in clients %}
         <div class="clients">
-            <p class="title">Номер клиента: {{ client[0] }}</p>
+            <p class="title">Номер клиента: <a href="{{ url_for('showClient', id_client=client[0]) }}">{{ client[0] }}</a></p>
             <p class="annonce">Имя: {{ client[1] }}</p>
             <p class="annonce">Фамилия: {{ client[2] }}</p>
             <p class="annonce">Отчество: {{ client[3]}}</p>
