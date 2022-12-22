@@ -20,7 +20,6 @@ def getTrainingAnounce(db):
 
     return []
 
-
 # получение всех клиентов из бд
 def getClientAnounce(db):
     try:
@@ -58,6 +57,7 @@ def findClientById(client_id, db):
 def addclient(firstname, surname, lastname, phone, mail, address, date, group, db):
     try:
         with db.cursor() as cursor:
+            cursor.execute("ROLLBACK;")
             query1 = sql.SQL("CALL add_client_transaction({fn},{sn},{ln},{ph},{em},{adr},{dt},{grr})") \
                 .format(fn=sql.Literal(firstname), sn=sql.Literal(surname), ln=sql.Literal(lastname),
                         ph=sql.Literal(phone), em=sql.Literal(mail), adr=sql.Literal(address),
@@ -180,30 +180,28 @@ def deleteclient(id, db):
         db.commit()
     except Exception as e:
         print(e)
-        print("Ошибка редактирования клиента.")
-
+        print("Ошибка удаления клиента.")
 
 #  для менеджера и обычного сотрудника функции изменения задания разные.
-def updateTrain(start, finish, date, group, trainer, description, db, train_id, is_manager, is_admin):
+def updateTrain(start, finish, group, trainer, description, db, train_id, is_manager, is_admin):
     try:
         with db.cursor() as cursor:
             if is_manager or is_admin:
                 query = sql.SQL("UPDATE training SET start_time = {startd},finish_time = {finishd},"
-                                "training_date = {dated},training_name = {descriptions},"
+                                "training_name = {descriptions},"
                                 "group_number = {groupn},trainer_number = {trainern} "
                                 "WHERE training_number = {train_num}") \
                     .format(startd=sql.Literal(start), finishd=sql.Literal(finish),
-                            dated=sql.Literal(date), descriptions=sql.Literal(description),
+                            descriptions=sql.Literal(description),
                             groupn=sql.Literal(group), trainern=sql.Literal(trainer),
                             train_num=sql.Literal(train_id))
 
                 cursor.execute(query)
             else:
                 query1 = sql.SQL("UPDATE training SET start_time = {startd},finish_time = {finishd},"
-                                 "training_date = {dated}"
                                  "WHERE training_number = {train_num}") \
                     .format(startd=sql.Literal(start), finishd=sql.Literal(finish),
-                            dated=sql.Literal(date), train_num=sql.Literal(train_id))
+                            train_num=sql.Literal(train_id))
                 cursor.execute(query1)
         db.commit()
     except Exception as e:
@@ -214,7 +212,7 @@ def updateTrain(start, finish, date, group, trainer, description, db, train_id, 
 def getgroupsview(db):
     try:
         with db.cursor(cursor_factory=DictCursor) as cursor:
-            cursor.execute("SELECT * FROM vieww")
+            cursor.execute("SELECT * FROM vieww;")
             res = cursor.fetchall()
             if not res:
                 print("Группы не найдены.")

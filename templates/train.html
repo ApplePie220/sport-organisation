@@ -11,20 +11,18 @@
             </div>
         </div>
          <form action="" method="post" class="form-contact">
-             <div class="task_title">Дата проведения: </div>
-                    <input class="task_input" type="text" name="date" value="{{ training[1] }}" required />
-             <div class="task_title">Время начала: </div>
-                    <input class="task_input" type="text" name="start" value="{{ training[2] }}" required />
-             <div class="task_title">Окончание: </div>
-                    <input class="task_input" type="text" name="finish" value="{{ training[3] }}" required />
+             <div class="task_title">Дата и время начала: </div>
+                    <input class="task_input" type="text" name="start" value="{{ training[1] }}" required />
+             <div class="task_title">Дата и время окончания: </div>
+                    <input class="task_input" type="text" name="finish" value="{{ training[2] }}" required />
                 {% if manager or admin%}
                     <div class="task_title">Номер группы: </div>
-                        <input class="task_input" type="text" name="group" value="{{ training[6] }}" required />
+                        <input class="task_input" type="text" name="group" value="{{ training[5] }}" required />
                     <div class="task_title">Номер тренера: </div>
-                        <input class="task_input" type="text" name="trainer" value="{{ training[7] }}" required />
+                        <input class="task_input" type="text" name="trainer" value="{{ training[6] }}" required />
                     <p>Описание: </p>
                     <p><label>
-                        <textarea name="description" rows=7 cols=40 type="text">{{ training[5] }}</textarea>
+                        <textarea name="description" rows=7 cols=40 type="text">{{ training[4] }}</textarea>
                     </label>
                 {% endif %}
              <p><input class="task-button" type="submit" value="Изменить тренировку." />

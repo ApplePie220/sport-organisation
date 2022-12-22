@@ -150,10 +150,10 @@ def clients():
 def groups():
     if 'current_user' in session:
         db = connection_db(session.get('current_user', SECRET_KEY)[6], session.get('user_password', SECRET_KEY))
-        groups = getgroupsview(db)
+        group = getgroupsview(db)
         position_user = getPositionUser(session.get('current_user', SECRET_KEY)[0], db)
         user_id_admin = True if position_user['position_number'] == 3 else False
-    return render_template('groups_list.html', groups=groups, admin=user_id_admin,
+    return render_template('groups_list.html', groups=group, admin=user_id_admin,
                            title="Список спортивных групп.")
 
 
@@ -193,7 +193,7 @@ def editEquip(id_equip):
                         return redirect(url_for('equipment'))
         else:
             equipment = getequip(id_equip,db)
-    return render_template('edit_equip.html', admin=user_id_admin, title='Добавление спорт. оборудования',
+    return render_template('edit_equip.html', admin=user_id_admin, title='Изменение спорт. оборудования',
                            equip=equipment)
 
 @app.route('/add-group', methods=["POST", "GET"])
@@ -366,7 +366,6 @@ def addClient():
             return redirect(url_for('clients'))
     return render_template('add_client.html', groups=groups, admin=user_id_admin, title='Добавление клиента.')
 
-
 # отображение всех доступных заданий для пользователя
 @app.route('/index')
 @app.route('/')
@@ -400,17 +399,16 @@ def showTrain(id_train):
                 with db:
                     start = request.form.get('start')
                     finish = request.form.get('finish')
-                    date = request.form.get('date')
                     group = 'null' if request.form.get('group') == 'None' else \
                         request.form.get('group')
                     trainer = 'null' if request.form.get('trainer') == 'None' else \
                         request.form.get('trainer')
                     description = 'null' if request.form.get('description') == 'None' else \
                         request.form.get('description')
-                    if not (start or finish or date or group or trainer or description):
+                    if not (start or finish or group or trainer or description):
                         flash("Заполните все поля", "error")
                     else:
-                        updateTrain(start, finish, date, group, trainer, description, db,
+                        updateTrain(start, finish, group, trainer, description, db,
                                     id_train, user_is_manager, user_id_admin)
                         flash("Тренировка успешно изменена", "success")
                         return redirect(url_for('index'))
