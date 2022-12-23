@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+    {% block content %}
+        {{ super() }}
+        {% for cat, msg in get_flashed_messages(True) %}
+        <div  class="flash {{ cat }}">{{ msg }}</div>
+        {% endfor %}
+        {% if admin %}
+
+        <div class="client">
+            <div class="title"><label>Id тренировки: </label> {{ trainn[0]}}</div>
+            <div class="annonce">Дата и время начала: {{ trainn[1] }}</div>
+            <div class="annonce">Дата и время окончания: {{ trainn[2] }}</div>
+            <div class="annonce">Проведена тренировка? {{ trainn[3]}}</div>
+            <div class="annonce">Номер группы: {{ trainn[5]}}</div>
+            <div class="annonce">Номер тренера: {{ trainn[6]}}</div>
+            <div class="annonce">Описание: {{ trainn[4]}}</div>
+                <div class="annonce">Используемое спорт. оборудование:
+                    {% for equip in equips %}
+                    {{ equip[1] }};
+                    {% endfor %}
+                </div>
+
+            <div class="butt_client">
+                {% if (admin or manager) and trainn[3] != true %}
+                <div>
+                  <button class="del_but" onclick="document.location='{{ url_for('addEquipTrain', id_train=trainn[0]) }}'">Добавить спорт. оборудование</button>
+                </div>
+                    {% endif %}
+                <div>
+                    {% if trainn[3] != true %}
+                    <button class="change_but" onclick="document.location='{{ url_for('showTrain', id_train=trainn[0]) }}'">Редактировать</button>
+                        {% endif %}
+                </div>
+            </div>
+        </div>
+
+        {% endif %}
+        {% if not admin %}
+            <p>Доступ запрещен. Вернись на <a href="{{ url_for('index') }}">главную</a> страницу.
+        {% endif %}
+    {% endblock %}

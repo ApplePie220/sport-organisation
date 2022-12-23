@@ -9,12 +9,14 @@
             <div><button class="add_smth" onclick="document.location='{{ url_for('addGroup') }}'">Добавить группу</button></div>
         <div class="list-posts">
             {% for group in groups %}
-                <div class="group">
-                    <div class="title">Id группы: {{ group[0] }}</div>
-                    <div class="annonce">Название: {{ group[2] }}</div>
-                    <div class="annonce">Вид спорта: {{ group[1] }}</div>
-                    <div class="annonce">Количество человек в группе: {{ group[3]}}</div>
+                 <a href="{{ url_for('showGroup', id_group=group[0]) }}">
+                    <div class="group">
+                        <div class="title">Id группы: {{ group[0] }}</div>
+                        <div class="annonce">Название: {{ group[2] }}</div>
+                        <div class="annonce">Вид спорта: {{ group[1] }}</div>
+                        <div class="annonce">Количество человек в группе: {{ group[3]}}</div>
                 </div>
+                 </a>
             {% endfor %}
         </div>
         {% endif %}

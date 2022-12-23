@@ -10,7 +10,7 @@ def connect():
         connection = psycopg2.connect(
             host='localhost',
             user='postgres',
-            password='74NDF*305c',
+            password='frerard2203',
             database='sportorg'
         )
         return connection
@@ -32,7 +32,7 @@ for i in range(1,560):
         email = person.email(domains=['example.com'])
         date = generic.datetime.date()
         address = "г. " + de.city() + ", " + de.address()
-        group = random.randint(1,3)
+        group = random.randint(1,4)
         cursor.execute("CALL add_client_transaction(%s,%s,%s,%s,%s,%s,%s,%s)",
                        (firstname, lastname,surname,phone,email, address, date, group))
 

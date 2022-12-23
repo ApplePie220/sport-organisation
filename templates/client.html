@@ -20,14 +20,14 @@
                     {{ group[0] }}
                     {% endfor %}
                 </div>
-            <div class="butt_client">
-                <div>
-                  <button class="del_but" onclick="document.location='{{ url_for('deleteClient', id_client=client[0]) }}'">Удалить</button>
-                </div>
-                <div>
-                    <button class="change_but" onclick="document.location='{{ url_for('editClient', id_client=client[0]) }}'">Редактировать</button>
-                </div>
-            </div>
+                    <div class="butt_client">
+                        <div>
+                          <button class="del_but" onclick="document.location='{{ url_for('deleteClient', id_client=client[0]) }}'">Удалить</button>
+                        </div>
+                        <div>
+                            <button class="change_but" onclick="document.location='{{ url_for('editClient', id_client=client[0]) }}'">Редактировать</button>
+                        </div>
+                    </div>
         </div>
 
         {% endif %}

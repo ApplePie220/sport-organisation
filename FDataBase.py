@@ -8,10 +8,7 @@ from psycopg2 import sql
 def getTrainingAnounce(db):
     try:
         with db.cursor(cursor_factory=DictCursor) as cursor:
-            cursor.execute("SELECT tr.training_number, start_time, finish_time, status, training_name, group_number,trainer_number, "
-                           "sp.sport_equip_name FROM training tr "
-                           "LEFT JOIN sport_equip_training spt ON tr.training_number=spt.training_number "
-                           "LEFT JOIN sport_equipment sp ON spt.sport_equip_number=sp.sport_equip_number;")
+            cursor.execute("SELECT * FROM training")
             res = cursor.fetchall()
             if res :
                 return res
@@ -58,14 +55,14 @@ def findGroupById(group_id, db):
     try:
         with db.cursor() as cursor:
 
-            cursor.execute("SELECT * FROM vieww WHERE group_id=%(gr_number)s",
+            cursor.execute("SELECT * FROM vieww WHERE group_number=%(gr_number)s",
                            {'gr_number': group_id})
             res = cursor.fetchone()
             if res:
                 return res
     except Exception as e:
         print(e)
-        print("Ошибка получения клиента по его id.")
+        print("Ошибка получения группы по его id.")
 
     return False
 
@@ -245,6 +242,19 @@ def insertClientToGr(id_cl,id_gr,db):
         print(e)
         print("Ошибка добавление клиента в группу.")
 
+ # добавление оборудования тренировке
+def insertEquipToTr(id_eq,id_tr,db):
+    try:
+        with db.cursor() as cursor:
+            query = sql.SQL("INSERT INTO sport_equip_training(sport_equip_number,training_number) "
+                            "VALUES ({eq},{tr});") \
+                .format(eq=sql.Literal(id_eq), tr=sql.Literal(id_tr))
+            cursor.execute(query)
+        db.commit()
+    except Exception as e:
+        print(e)
+        print("Ошибка добавление клиента в группу.")
+
 #  для менеджера и обычного сотрудника запросы на изменение тренировок разные.
 def updateTrain(start, finish, group, trainer, description, db, train_id, is_manager, is_admin):
     try:
@@ -330,6 +340,21 @@ def getgroupstable(client_id,db):
     except Exception as e:
         print(e)
         print("Ошибка получения спорт. групп клиента из бд.")
+    return False
+
+def getequipstable(train_id,db):
+    try:
+        with db.cursor(cursor_factory=DictCursor) as cursor:
+            cursor.execute("SELECT * FROM equip_train_view WHERE training_number = %(train_num)s",
+                           {'train_num': train_id})
+            res = cursor.fetchall()
+            if not res:
+                print("Оборудование тренировки не найдено.")
+                return []
+            return res
+    except Exception as e:
+        print(e)
+        print("Ошибка получения спорт. оборудования из бд.")
     return False
 
 # добавление спорт. группы

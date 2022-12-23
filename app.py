@@ -7,7 +7,7 @@ import psycopg2
 import re
 import os
 
-# подулючение виртуального окружения для получения секретных данных
+# подключение виртуального окружения для получения секретных данных
 load_dotenv()
 SECRET_KEY = os.getenv('SECRET_KEY')
 DB_USER = os.getenv('DB_USER')
@@ -123,7 +123,7 @@ def register():
             else:
                 flash('Неверно заполнены поля', 'error')
 
-    return render_template('register.html', title="Регистрация работника.", admin=user_id_admin)
+    return render_template('register.html', title="Регистрация работника", admin=user_id_admin)
 
 
 # отображение списка клиентов
@@ -384,11 +384,68 @@ def showGroup(id_group):
                 group = findGroupById(id_group, db)
                 if not group:
                     flash("Группа с таким id не найдена или не существует", "error")
-                    return redirect(url_for('clients'))
+                    return redirect(url_for('groups'))
 
     return render_template('show_group.html', admin=user_id_admin,
                            group=group, title="Информация о группе")
 
+
+# отображение конкретной тренировки
+@app.route('/train/<int:id_train>')
+@login_required
+def train(id_train):
+    trains = None
+    equipp = None
+    if 'current_user' in session:
+        # проверка на корректный id.
+        check_correst_id = re.findall(r"[^0-9]", str(id_train))
+        if check_correst_id:
+            flash("Введите корректный id", "error")
+        else:
+            db = connection_db(session.get('current_user', SECRET_KEY)[6], session.get('user_password', SECRET_KEY))
+            position_user = getPositionUser(session.get('current_user', SECRET_KEY)[0], db)
+            user_id_admin = True if position_user['position_number'] == 3 else False
+            with db:
+
+                # получаем тренировку по ее id.
+                trains = getTrain(id_train, db)
+                equipp = getequipstable(id_train, db)
+                if not trains:
+                    flash("Тренировка с таким id не найдена или не существует", "error")
+                    return redirect(url_for('groups'))
+
+    return render_template('show_train.html', admin=user_id_admin,
+                           trainn=trains,equips=equipp, title="Информация о тренировке")
+
+# добавляем оборудование тренировке
+@app.route('/train/<int:id_train>/addequip', methods=["POST", "GET"])
+@login_required
+def addEquipTrain(id_train):
+    if 'current_user' in session:
+        db = connection_db(session.get('current_user', SECRET_KEY)[6], session.get('user_password', SECRET_KEY))
+        position_user = getPositionUser(session.get('current_user', SECRET_KEY)[0], db)
+        user_is_manager = True if position_user['position_number'] == 1 else False
+        user_id_admin = True if position_user['position_number'] == 3 else False
+        if request.method == "POST":
+
+            # проверка на корректный id.
+            check_correst_id = re.findall(r"[^0-9]", str(id_train))
+            if check_correst_id:
+                flash("Incorrect id.", "error")
+            else:
+
+                # получаем пользовательский ввод
+                id_equip = request.form.get('id')
+                if not id_equip:
+                    flash("Заполните поле.", "error")
+                else:
+
+                    # добавляем оборудование тренировке по его id
+                    insertEquipToTr(id_equip, id_train, db)
+                    flash("Оборудование успешно добавлено", "success")
+                    return redirect(url_for('index'))
+    return render_template('add_equip_train.html', admin=user_id_admin,manager = user_is_manager,
+                           title="Добавление оборудование тренировке")
 
 # Редактирование клиента
 @app.route('/client/<int:id_client>/edit', methods=['GET', 'POST'])
@@ -550,8 +607,8 @@ def index():
                            manager=user_is_manager, title="Список тренировок")
 
 
-# отображение конкретной тренировки и ее редактирование
-@app.route('/train/<int:id_train>', methods=['GET', 'POST'])
+# редактирование конкретной тренировки
+@app.route('/train/<int:id_train>/edit>', methods=['GET', 'POST'])
 @login_required
 def showTrain(id_train):
     train = None
