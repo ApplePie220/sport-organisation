@@ -8,10 +8,9 @@
 {% if admin %}
     <div id="report-form">
         <form action="" method="post" class="form-contact">
-            <p class="report">Внимание! Перед удалением тренера убедитесь, что нет тренировок, связанных с ним. Если
-            собираетесь его удалить, отдайте все его тренировки другим тренерам и только потом удаляйте.
-            <p class="report">Id сотрудника: <input type="text" placeholder="Введите id" name="id", value="" required />
-            <p><input class="rep_button" type="submit" value="Удалить сотрудника." />
+            <p class="warning">Внимание! Перед удалением тренера убедитесь, что нет тренировок, связанных с ним. Если собираетесь его удалить, отдайте все его тренировки другим тренерам и только потом удаляйте.</p>
+            <div class="report">Id сотрудника: <input type="text" placeholder="Введите id" name="id", value="" required />
+            <div><input class="task-button" type="submit" value="Удалить сотрудника." /></div>
         </form>
     </div>
     {% endif %}

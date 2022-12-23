@@ -164,7 +164,8 @@ def equipment():
         equips = getequips(db)
         position_user = getPositionUser(session.get('current_user', SECRET_KEY)[0], db)
         user_id_admin = True if position_user['position_number'] == 3 else False
-    return render_template('equip_list.html', equips=equips, admin=user_id_admin,
+        user_is_manager = True if position_user['position_number'] == 1 else False
+    return render_template('equip_list.html', equips=equips, admin=user_id_admin,manager=user_is_manager,
                            title="Список спорт. оборудования")
 
 
