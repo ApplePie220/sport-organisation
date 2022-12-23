@@ -168,6 +168,7 @@ def equipment():
     return render_template('equip_list.html', equips=equips, admin=user_id_admin,
                            title="Список спорт. оборудования")
 
+
 @app.route('/equip/<int:id_equip>/edit', methods=["POST", "GET"])
 @login_required
 def editEquip(id_equip):
@@ -188,13 +189,14 @@ def editEquip(id_equip):
                     if not (name or code or amount):
                         flash("Заполните все поля", "error")
                     else:
-                        editequipment(name, code, amount,id_equip, db)
+                        editequipment(name, code, amount, id_equip, db)
                         flash('Спорт. инвентарь успешно изменен', category='succes')
                         return redirect(url_for('equipment'))
         else:
-            equipment = getequip(id_equip,db)
+            equipment = getequip(id_equip, db)
     return render_template('edit_equip.html', admin=user_id_admin, title='Редактор спорт. оборудования',
                            equip=equipment)
+
 
 @app.route('/add-group', methods=["POST", "GET"])
 @login_required
@@ -234,11 +236,14 @@ def showClient(id_client):
             user_id_admin = True if position_user['position_number'] == 3 else False
             with db:
                 client = findClientById(id_client, db)
+                groupclient = getgroupstable(id_client, db)
                 if not client:
                     flash("Клиент с таким id не найден или не существует", "error")
                     return redirect(url_for('clients'))
 
-    return render_template('client.html', admin=user_id_admin, client=client, title="Информация о клиенте")
+    return render_template('client.html', admin=user_id_admin, groups=groupclient,
+                           client=client, title="Информация о клиенте")
+
 
 @app.route('/client/<int:id_client>/delete')
 @login_required
@@ -250,6 +255,90 @@ def deleteClient(id_client):
     else:
         deleteclient(id_client, db)
         return redirect(url_for('clients'))
+
+
+@app.route('/delete-emp', methods=["POST", "GET"])
+@login_required
+def deleteEmployee():
+    if 'current_user' in session:
+        db = connection_db(session.get('current_user', SECRET_KEY)[6], session.get('user_password', SECRET_KEY))
+        position_user = getPositionUser(session.get('current_user', SECRET_KEY)[0], db)
+        user_id_admin = True if position_user['position_number'] == 3 else False
+        if request.method == "POST":
+            id = request.form.get('id')
+            deleteEmpl(id, db)
+            flash("Работник удален", "success")
+            return redirect(url_for('index'))
+    return render_template('delete_empl.html', admin=user_id_admin,
+                           title="Удаление сотрудника!")
+
+
+@app.route('/group/<int:id_group>/deleteclient', methods=["POST", "GET"])
+@login_required
+def deleteClientFromGroup(id_group):
+    if 'current_user' in session:
+        db = connection_db(session.get('current_user', SECRET_KEY)[6], session.get('user_password', SECRET_KEY))
+        position_user = getPositionUser(session.get('current_user', SECRET_KEY)[0], db)
+        user_id_admin = True if position_user['position_number'] == 3 else False
+        if request.method == "POST":
+            check_correst_id = re.findall(r"[^0-9]", str(id_group))
+            if check_correst_id:
+                flash("Incorrect id.", "error")
+            else:
+                id_client = request.form.get('id')
+                if not id_client:
+                    flash("Заполните поле.", "error")
+                else:
+                    deleteClientFromGr(id_client, id_group, db)
+                    flash("Клиент удален", "success")
+                    return redirect(url_for('groups'))
+    return render_template('delete_client_from_group.html', admin=user_id_admin,
+                           title="Удаление клиента из группы")
+
+
+@app.route('/group/<int:id_group>/addclient', methods=["POST", "GET"])
+@login_required
+def addClientToGroup(id_group):
+    if 'current_user' in session:
+        db = connection_db(session.get('current_user', SECRET_KEY)[6], session.get('user_password', SECRET_KEY))
+        position_user = getPositionUser(session.get('current_user', SECRET_KEY)[0], db)
+        user_id_admin = True if position_user['position_number'] == 3 else False
+        if request.method == "POST":
+            check_correst_id = re.findall(r"[^0-9]", str(id_group))
+            if check_correst_id:
+                flash("Incorrect id.", "error")
+            else:
+                id_client = request.form.get('id')
+                if not id_client:
+                    flash("Заполните поле.", "error")
+                else:
+                    insertClientToGr(id_client, id_group, db)
+                    flash("Клиент успешно добавлен", "success")
+                    return redirect(url_for('groups'))
+    return render_template('add_client_in_group.html', admin=user_id_admin,
+                           title="Добавление клиента в группу")
+
+
+@app.route('/group/<int:id_group>')
+@login_required
+def showGroup(id_group):
+    group = None
+    if 'current_user' in session:
+        check_correst_id = re.findall(r"[^0-9]", str(id_group))
+        if check_correst_id:
+            flash("Введите корректный id", "error")
+        else:
+            db = connection_db(session.get('current_user', SECRET_KEY)[6], session.get('user_password', SECRET_KEY))
+            position_user = getPositionUser(session.get('current_user', SECRET_KEY)[0], db)
+            user_id_admin = True if position_user['position_number'] == 3 else False
+            with db:
+                group = findGroupById(id_group, db)
+                if not group:
+                    flash("Группа с таким id не найдена или не существует", "error")
+                    return redirect(url_for('clients'))
+
+    return render_template('show_group.html', admin=user_id_admin,
+                           group=group, title="Информация о группе")
 
 
 @app.route('/client/<int:id_client>/edit', methods=['GET', 'POST'])
@@ -276,15 +365,17 @@ def editClient(id_client):
                         flash("Заполните все поля", "error")
                     else:
                         updateClient(firstn, surn, lastn, phone, email, address, db,
-                                    id_client)
+                                     id_client)
                         flash("Клиент успешно изменен", "success")
                         return redirect(url_for('clients'))
         else:
             with db:
                 client = getClient(id_client, db)
+                group = getgroupsforclient(db)
 
-    return render_template('edit_client.html', admin=user_id_admin, client=client,
+    return render_template('edit_client.html', admin=user_id_admin, client=client, groups=group,
                            title="Редактор клиента")
+
 
 # добавление задания
 @app.route('/add-train', methods=["POST", "GET"])
@@ -308,7 +399,7 @@ def addTrain():
             if not (date or start or finish or group or trainer or description or equip):
                 flash("Заполните все поля", "error")
             else:
-                res = addtrain(date, start, finish, group, trainer, description,equip, db)
+                res = addtrain(date, start, finish, group, trainer, description, equip, db)
                 if not res:
                     flash('Ошибка добавления тренировки', category='error')
                 else:
@@ -316,6 +407,7 @@ def addTrain():
             return redirect(url_for('index'))
     return render_template('add_train.html', admin=user_id_admin, title='Добавление тренировки',
                            manager=user_is_manager, equips=equips)
+
 
 @app.route('/add-equip', methods=["POST", "GET"])
 @login_required
@@ -332,10 +424,11 @@ def addEquip():
             if not (amount or code or name):
                 flash("Заполните все поля", "error")
             else:
-                addequipment(name,code,amount, db)
+                addequipment(name, code, amount, db)
                 flash('Оборудование успешно добавлено', category='succes')
             return redirect(url_for('equipment'))
     return render_template('add_equip.html', admin=user_id_admin, title='Добавление спорт. оборудования')
+
 
 @app.route('/add-client', methods=["POST", "GET"])
 @login_required
@@ -366,6 +459,7 @@ def addClient():
             return redirect(url_for('clients'))
     return render_template('add_client.html', groups=groups, admin=user_id_admin, title='Добавление клиента')
 
+
 # отображение всех доступных заданий для пользователя
 @app.route('/index')
 @app.route('/')
@@ -381,7 +475,7 @@ def index():
                            manager=user_is_manager, title="Список тренировок")
 
 
-# отображение конкретного задания и его редактирование
+# отображение конкретной тренировки и ее редактирование
 @app.route('/train/<int:id_train>', methods=['GET', 'POST'])
 @login_required
 def showTrain(id_train):

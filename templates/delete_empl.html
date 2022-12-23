@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{{ super() }}
+{% for cat, msg in get_flashed_messages(True) %}
+    <div class="flash {{ cat }}">{{ msg }}</div>
+{% endfor %}
+{% if admin %}
+    <div id="report-form">
+        <form action="" method="post" class="form-contact">
+            <p class="report">Внимание! Перед удалением тренера убедитесь, что нет тренировок, связанных с ним. Если
+            собираетесь его удалить, отдайте все его тренировки другим тренерам и только потом удаляйте.
+            <p class="report">Id сотрудника: <input type="text" placeholder="Введите id" name="id", value="" required />
+            <p><input class="rep_button" type="submit" value="Удалить сотрудника." />
+        </form>
+    </div>
+    {% endif %}
+{% if not admin %}
+            <p>Доступ запрещен. Вернись на <a href="{{ url_for('index') }}">главную</a> страницу.
+        {% endif %}
+{% endblock %}

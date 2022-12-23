@@ -15,7 +15,11 @@
             <div class="annonce">Почта: {{ client[5]}}</div>
             <div class="annonce">Дата рождения: {{ client[7]}}</div>
             <div class="annonce">Адрес: {{ client[6]}}</div>
-
+                <div class="annonce">Спорт группы:
+                    {% for group in groups %}
+                    {{ group[0] }}
+                    {% endfor %}
+                </div>
             <div class="butt_client">
                 <div>
                   <button class="del_but" onclick="document.location='{{ url_for('deleteClient', id_client=client[0]) }}'">Удалить</button>

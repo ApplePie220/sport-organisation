@@ -3,6 +3,7 @@ from psycopg2.extras import DictCursor
 from psycopg2 import sql
 
 
+
 # получение всех доступных заданий из бд
 def getTrainingAnounce(db):
     try:
@@ -52,6 +53,20 @@ def findClientById(client_id, db):
 
     return False
 
+def findGroupById(group_id, db):
+    try:
+        with db.cursor() as cursor:
+
+            cursor.execute("SELECT * FROM vieww WHERE group_id=%(gr_number)s",
+                           {'gr_number': group_id})
+            res = cursor.fetchone()
+            if res:
+                return res
+    except Exception as e:
+        print(e)
+        print("Ошибка получения клиента по его id.")
+
+    return False
 
 # добавление новой тренировки в бд
 def addclient(firstname, surname, lastname, phone, mail, address, date, group, db):
@@ -182,6 +197,43 @@ def deleteclient(id, db):
         print(e)
         print("Ошибка удаления клиента.")
 
+def deleteEmpl(id,db):
+    try:
+        with db.cursor() as cursor:
+            cursor.execute("SELECT employee_login FROM employee WHERE employee_number = %(empl_n)s",
+                            {'empl_n':id})
+            log_e = cursor.fetchone()
+
+            query1 = sql.SQL("SELECT delete_employee_and_role({empnum}, {emplog})") \
+                .format(empnum=sql.Literal(id), emplog=sql.Literal(log_e))
+            cursor.execute(query1)
+        db.commit()
+    except Exception as e:
+        print(e)
+        print("Ошибка удаления работника.")
+def deleteClientFromGr(id_cl,id_gr,db):
+    try:
+        with db.cursor() as cursor:
+            cursor.execute("DELETE FROM client_group_table WHERE client_number = %(cl_n)s AND "
+                           "group_number = %(group)s",
+                            {'cl_n':id_cl, 'group':id_gr})
+        db.commit()
+    except Exception as e:
+        print(e)
+        print("Ошибка удаления клиента из группы.")
+
+def insertClientToGr(id_cl,id_gr,db):
+    try:
+        with db.cursor() as cursor:
+            query = sql.SQL("INSERT INTO client_group_table(group_number,client_number) "
+                            "VALUES ({gr},{cl});") \
+                .format(gr=sql.Literal(id_gr), cl=sql.Literal(id_cl))
+            cursor.execute(query)
+        db.commit()
+    except Exception as e:
+        print(e)
+        print("Ошибка добавление клиента в группу.")
+
 #  для менеджера и обычного сотрудника функции изменения задания разные.
 def updateTrain(start, finish, group, trainer, description, db, train_id, is_manager, is_admin):
     try:
@@ -198,7 +250,7 @@ def updateTrain(start, finish, group, trainer, description, db, train_id, is_man
 
                 cursor.execute(query)
             else:
-                query1 = sql.SQL("UPDATE training SET start_time = {startd},finish_time = {finishd},"
+                query1 = sql.SQL("UPDATE training SET start_time = {startd},finish_time = {finishd}"
                                  "WHERE training_number = {train_num}") \
                     .format(startd=sql.Literal(start), finishd=sql.Literal(finish),
                             train_num=sql.Literal(train_id))
@@ -250,7 +302,20 @@ def getgroupsforclient(db):
         print("Ошибка получения спорт. групп из бд.")
     return False
 
-
+def getgroupstable(client_id,db):
+    try:
+        with db.cursor(cursor_factory=DictCursor) as cursor:
+            cursor.execute("SELECT * FROM group_client WHERE client_number = %(client_num)s",
+                           {'client_num':client_id})
+            res = cursor.fetchall()
+            if not res:
+                print("Группы клиента не найдены.")
+                return False
+            return res
+    except Exception as e:
+        print(e)
+        print("Ошибка получения спорт. групп клиента из бд.")
+    return False
 def addgroup(name, type, db):
     try:
         with db.cursor() as cursor:

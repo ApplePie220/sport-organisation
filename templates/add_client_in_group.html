@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{{ super() }}
+{% for cat, msg in get_flashed_messages(True) %}
+    <div class="flash {{ cat }}">{{ msg }}</div>
+{% endfor %}
+{% if admin %}
+    <div id="report-form">
+        <form action="" method="post" class="form-contact">
+            <p class="report">Id клиента: <input type="text" placeholder="Введите id" name="id", value="" required />
+            <p><input class="rep_button" type="submit" value="Добавить клиента в группу" />
+        </form>
+    </div>
+    {% endif %}
+{% if not admin %}
+            <p>Доступ запрещен. Вернись на <a href="{{ url_for('index') }}">главную</a> страницу.
+        {% endif %}
+{% endblock %}
