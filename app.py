@@ -78,7 +78,7 @@ def login():
                 # сравниваем введенный пароль с паролем в бд
                 user_password_correct = getPassUserByLogin(user_login, enter_pass, db)
 
-                # если пароль верный, то создаем сессию этого пользователя
+                # если пароль верный, то создаем пользователя и сессию для него
                 if user_password_correct:
                     user = getUserByLogin(user_login, db)
                     userlogin = UserLogin().create(user)
