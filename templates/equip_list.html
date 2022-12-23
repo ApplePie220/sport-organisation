@@ -10,6 +10,7 @@
             <div>
                 <button class="add_smth" onclick="document.location='{{ url_for('addEquip') }}'">Добавить оборудование</button>
             </div>
+            {% endif %}
         <div class="list-posts">
             {% for equip in equips %}
                 <a href="{{ url_for('editEquip', id_equip=equip[0]) }}">
@@ -22,9 +23,5 @@
                 </a>
             {% endfor %}
         </div>
-        {% endif %}
-        {% if not admin%}
-            <p>Доступ запрещен. Вернись на <a href="{{ url_for('index') }}">главную</a> страницу.
-        {% endif %}
 
     {% endblock %}

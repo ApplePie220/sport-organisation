@@ -82,8 +82,7 @@ def login():
                     userlogin = UserLogin().create(user)
 
                     # для запоминания пользователя в сессии
-                    rm = True if request.form.get('remainme') else False
-                    login_user(userlogin, remember=rm)
+                    login_user(userlogin)
                     session['current_user'] = user
                     session['user_password'] = enter_pass
                     return redirect(url_for("profile"))
@@ -270,7 +269,7 @@ def deleteEmployee():
             flash("Работник удален", "success")
             return redirect(url_for('index'))
     return render_template('delete_empl.html', admin=user_id_admin,
-                           title="Удаление сотрудника!")
+                           title="Удаление сотрудника")
 
 
 @app.route('/group/<int:id_group>/deleteclient', methods=["POST", "GET"])
@@ -537,6 +536,7 @@ def profile():
 
 # генерация отчета по заданиям для конкретного работника в формате csv
 @app.route('/train-report', methods=['POST', 'GET'])
+@login_required
 def generate_train_report():
     if 'current_user' in session:
         db = connection_db(DB_USER, DB_PASSWORD)
