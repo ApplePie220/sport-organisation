@@ -4,7 +4,7 @@ from psycopg2 import sql
 
 
 
-# получение всех доступных заданий из бд
+# получение всех доступных тренировок из бд
 def getTrainingAnounce(db):
     try:
         with db.cursor(cursor_factory=DictCursor) as cursor:
@@ -53,6 +53,7 @@ def findClientById(client_id, db):
 
     return False
 
+# поиск группы по ее Id
 def findGroupById(group_id, db):
     try:
         with db.cursor() as cursor:
@@ -68,7 +69,7 @@ def findGroupById(group_id, db):
 
     return False
 
-# добавление новой тренировки в бд
+# добавление новой клиента в бд
 def addclient(firstname, surname, lastname, phone, mail, address, date, group, db):
     try:
         with db.cursor() as cursor:
@@ -103,7 +104,7 @@ def addtrain(start, finish, group, trainer, description,equip, db):
     return True
 
 
-# получить задание по его id из бд
+# получить тренировки по ее id из бд
 def getTrain(id, db):
     try:
         with db.cursor() as cursor:
@@ -117,7 +118,7 @@ def getTrain(id, db):
         print("Ошибка получения тренировки из БД.")
     return (False, False)
 
-
+# получение клиента по его Id
 def getClient(id, db):
     try:
         with db.cursor() as cursor:
@@ -131,7 +132,7 @@ def getClient(id, db):
         print("Ошибка получения клиента из БД.")
     return (False, False)
 
-
+# обновление данных у клиента
 def updateClient(firstn, surn, lastn, phone, email, address, db, id_client):
     try:
         with db.cursor() as cursor:
@@ -149,6 +150,7 @@ def updateClient(firstn, surn, lastn, phone, email, address, db, id_client):
         print(e)
         print("Ошибка редактирования клиента.")
 
+# добавление спотр. оборудования
 def addequipment(name, code, amount, db):
     try:
         with db.cursor() as cursor:
@@ -160,6 +162,7 @@ def addequipment(name, code, amount, db):
         print(e)
         print("Ошибка добавления спорт. инвентаря.")
 
+# получение спорт. оборудования
 def getequip(id,db):
     try:
         with db.cursor() as cursor:
@@ -172,6 +175,8 @@ def getequip(id,db):
         print(e)
         print("Ошибка получения оборудования по id.")
     return (False, False)
+
+# редактирование спорт. оборудования
 def editequipment(name, code, amount,id, db):
     try:
         with db.cursor() as cursor:
@@ -186,6 +191,8 @@ def editequipment(name, code, amount,id, db):
     except Exception as e:
         print(e)
         print("Ошибка добавления спорт. инвентаря.")
+
+# удаление клиента
 def deleteclient(id, db):
     try:
         with db.cursor() as cursor:
@@ -197,6 +204,7 @@ def deleteclient(id, db):
         print(e)
         print("Ошибка удаления клиента.")
 
+# удаление работника
 def deleteEmpl(id,db):
     try:
         with db.cursor() as cursor:
@@ -211,6 +219,8 @@ def deleteEmpl(id,db):
     except Exception as e:
         print(e)
         print("Ошибка удаления работника.")
+
+# удаление клиента из группы
 def deleteClientFromGr(id_cl,id_gr,db):
     try:
         with db.cursor() as cursor:
@@ -222,6 +232,7 @@ def deleteClientFromGr(id_cl,id_gr,db):
         print(e)
         print("Ошибка удаления клиента из группы.")
 
+# добавление клиента в группу
 def insertClientToGr(id_cl,id_gr,db):
     try:
         with db.cursor() as cursor:
@@ -234,7 +245,7 @@ def insertClientToGr(id_cl,id_gr,db):
         print(e)
         print("Ошибка добавление клиента в группу.")
 
-#  для менеджера и обычного сотрудника функции изменения задания разные.
+#  для менеджера и обычного сотрудника запросы на изменение тренировок разные.
 def updateTrain(start, finish, group, trainer, description, db, train_id, is_manager, is_admin):
     try:
         with db.cursor() as cursor:
@@ -260,7 +271,7 @@ def updateTrain(start, finish, group, trainer, description, db, train_id, is_man
         print(e)
         print("Ошибка редактирования тренировки.")
 
-
+# получение view в котором отображается кол-во клиентов в группе и данные группы
 def getgroupsview(db):
     try:
         with db.cursor(cursor_factory=DictCursor) as cursor:
@@ -275,6 +286,7 @@ def getgroupsview(db):
         print("Ошибка получения спорт. групп из бд.")
     return False
 
+# получение данных спорт. оборудования для выбора при создании тренировки
 def getequipforchose(db):
     try:
         with db.cursor(cursor_factory=DictCursor) as cursor:
@@ -288,6 +300,8 @@ def getequipforchose(db):
         print(e)
         print("Ошибка получения спорт. оборудования из бд.")
     return False
+
+# получение спорт. групп для клиента
 def getgroupsforclient(db):
     try:
         with db.cursor(cursor_factory=DictCursor) as cursor:
@@ -302,6 +316,7 @@ def getgroupsforclient(db):
         print("Ошибка получения спорт. групп из бд.")
     return False
 
+#получение view в котором отображаются, к каким группам относятся клиенты
 def getgroupstable(client_id,db):
     try:
         with db.cursor(cursor_factory=DictCursor) as cursor:
@@ -316,6 +331,8 @@ def getgroupstable(client_id,db):
         print(e)
         print("Ошибка получения спорт. групп клиента из бд.")
     return False
+
+# добавление спорт. группы
 def addgroup(name, type, db):
     try:
         with db.cursor() as cursor:
@@ -333,6 +350,8 @@ def addgroup(name, type, db):
 # добавление нового пользователя в бд
 def addUser(firstname, surname, lastname, email, phone, login, password, expirience, role, db):
     try:
+
+        # номер роли для процедуры
         id_role = 0
         if role == 'trainer':
             id_role = 2
@@ -352,7 +371,7 @@ def addUser(firstname, surname, lastname, email, phone, login, password, expirie
 
     return True
 
-
+# получение спорт. оборудования
 def getequips(db):
     try:
         with db.cursor(cursor_factory=DictCursor) as cursor:
@@ -448,6 +467,7 @@ def getPositionUser(user_id, db):
 
     return False
 
+# получение названия позиции
 def getNamePosition(user_id, db):
     try:
         with db.cursor(cursor_factory=DictCursor) as cursor:
