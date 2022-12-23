@@ -8,16 +8,14 @@
     {% if (admin or manager) %}
 <div id="add-task">
     <form action="" method="post" class="form-contact">
-        <div class="task_title">Дата: </div>
-            <input class="task_input" type="text" name="date" value="" placeholder="формат YY-MM-DD" required />
-        <div class="task_title">Время начала: </div>
-            <input class="task_input" type="text" name="start" value="" placeholder="формат hh:mm:ss" required />
-        <div class="task_title">Время окончания: </div>
-            <input class="task_input" type="text" name="finish" value="" placeholder="формат hh:mm:ss" required />
+        <div class="task_title">Время и дата начала: </div>
+            <input class="task_input" type="text" name="start" value="" placeholder="формат YY:MM:DD hh:mm:ss" required />
+        <div class="task_title">Время и дата окончания: </div>
+            <input class="task_input" type="text" name="finish" value="" placeholder="формат YY:MM:DD  hh:mm:ss" required />
         <div class="task_title">Номер группы: </div>
-            <input class="task_input" type="text" name="group" value="" required />
+            <input class="task_input" type="text" name="group" value=""  placeholder="пример: 1" required />
         <div class="task_title">Номер тренера: </div>
-            <input class="task_input" type="text" name="trainer" value="" required />
+            <input class="task_input" type="text" name="trainer" value="" placeholder="пример: 2" required />
         <div class="task_title">Спорт. оборудование:
             <select class="reg_select" name="equip">
                 {% for equip in equips %}

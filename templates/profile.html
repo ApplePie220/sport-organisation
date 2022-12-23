@@ -13,6 +13,7 @@
         <li> Emal:: {{ current_user.getEmail() }}</li>
         <li> Телефон: {{ current_user.getPhone() }}</li>
         <li> Код должности: {{ current_user.getRoleId() }}</li>
+        <li> Название должности: {{ position[1] }}</li>
         </ul>
         <p><a href="{{ url_for('logout') }}">Выйти из профиля</a>
     </div>

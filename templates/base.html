@@ -21,7 +21,7 @@
         {% if current_user.is_authenticated %}
             <div class="menu"> <a href="{{ url_for('index') }}">Тренировки</a> </div>
         {% endif %}
-        {% if current_user.is_authenticated and manager%}
+        {% if current_user.is_authenticated and (manager or admin)%}
             <div class="menu"> <a href="{{ url_for('addTrain') }}">Добавить тренировку</a> </div>
             <div class="menu"> <a href="{{ url_for('generate_train_report') }}">Отчет тренировок</a> </div>
         {% endif %}

@@ -1,11 +1,10 @@
 {% extends 'base.html' %}
-
-
     {% block content %}
         {{ super() }}
         {% for cat, msg in get_flashed_messages(True) %}
         <div  class="flash {{ cat }}">{{ msg }}</div>
         {% endfor %}
+
         {% if admin %}
             <div><button class="add_smth" onclick="document.location='{{ url_for('addGroup') }}'">Добавить группу</button></div>
         <div class="list-posts">

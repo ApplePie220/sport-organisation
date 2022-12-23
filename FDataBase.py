@@ -8,8 +8,8 @@ from psycopg2 import sql
 def getTrainingAnounce(db):
     try:
         with db.cursor(cursor_factory=DictCursor) as cursor:
-            cursor.execute("SELECT tr.training_number, start_time, finish_time, status, training_name, group_number, "
-                           "sp.sport_equip_number, sp.sport_equip_name FROM training tr "
+            cursor.execute("SELECT tr.training_number, start_time, finish_time, status, training_name, group_number,trainer_number, "
+                           "sp.sport_equip_name FROM training tr "
                            "LEFT JOIN sport_equip_training spt ON tr.training_number=spt.training_number "
                            "LEFT JOIN sport_equipment sp ON spt.sport_equip_number=sp.sport_equip_number;")
             res = cursor.fetchall()
@@ -87,17 +87,17 @@ def addclient(firstname, surname, lastname, phone, mail, address, date, group, d
 
 
 # добавление новой тренировки в бд
-def addtrain(date, start, finish, group, trainer, description,equip, db):
+def addtrain(start, finish, group, trainer, description,equip, db):
     try:
         with db.cursor() as cursor:
-            query1 = sql.SQL("CALL add_training({dat},{strt},{fnsh},{descr},{gr},{tr}, {eq})") \
-                .format(dat=sql.Literal(date), strt=sql.Literal(start), fnsh=sql.Literal(finish),
+            query1 = sql.SQL("SELECT add_training({strt},{fnsh},{descr},{gr},{tr}, {eq})") \
+                .format(strt=sql.Literal(start), fnsh=sql.Literal(finish),
                         descr=sql.Literal(description), gr=sql.Literal(group),
                         tr=sql.Literal(trainer),eq=sql.Literal(equip))
             cursor.execute(query1)
-            db.commit()
+
     except Exception as e:
-        print("Ошибкад добавления тренировки " + e)
+        print("Ошибка при добавлении тренировки " + e)
         return False
 
     return True
@@ -448,6 +448,22 @@ def getPositionUser(user_id, db):
 
     return False
 
+def getNamePosition(user_id, db):
+    try:
+        with db.cursor(cursor_factory=DictCursor) as cursor:
+            cursor.execute("SELECT * FROM position_emp WHERE position_number = %(employee_number)s",
+                           {'employee_number': user_id})
+            res = cursor.fetchone()
+            if not res:
+                print("Позиции с таким id не найдено.")
+                return False
+            return res
+
+    except Exception as e:
+        print(e)
+        print("Ошибка получения позиции из бд.")
+
+    return False
 
 # создание отчета по тренировкам
 def get_report_task(path, start, finish, db):

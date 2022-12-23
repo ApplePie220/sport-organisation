@@ -389,17 +389,16 @@ def addTrain():
         equips = getequipforchose(db)
     if request.method == "POST":
         with db:
-            date = request.form.get('date')
             start = request.form.get('start')
             finish = request.form.get('finish')
             group = request.form.get('group')
             trainer = request.form.get('trainer')
             description = request.form.get('description')
             equip = request.form.get('equip')
-            if not (date or start or finish or group or trainer or description or equip):
+            if not (start or finish or group or trainer or description or equip):
                 flash("Заполните все поля", "error")
             else:
-                res = addtrain(date, start, finish, group, trainer, description, equip, db)
+                res = addtrain(start, finish, group, trainer, description, equip, db)
                 if not res:
                     flash('Ошибка добавления тренировки', category='error')
                 else:
@@ -529,9 +528,11 @@ def logout():
 def profile():
     db = connection_db(session.get('current_user', SECRET_KEY)[6], session.get('user_password', SECRET_KEY))
     position_user = getPositionUser(session.get('current_user', SECRET_KEY)[0], db)
+    position_name = getNamePosition(session.get('current_user', SECRET_KEY)[9], db)
     user_is_manager = True if position_user['position_number'] == 1 else False
     user_id_admin = True if position_user['position_number'] == 3 else False
-    return render_template("profile.html", title="Профиль", manager=user_is_manager, admin=user_id_admin)
+    return render_template("profile.html", title="Профиль", manager=user_is_manager, admin=user_id_admin,
+                           position = position_name)
 
 
 # генерация отчета по заданиям для конкретного работника в формате csv
