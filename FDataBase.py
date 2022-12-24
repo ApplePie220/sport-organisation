@@ -88,7 +88,8 @@ def addclient(firstname, surname, lastname, phone, mail, address, date, group, d
 def addtrain(start, finish, group, trainer, description,equip, db):
     try:
         with db.cursor() as cursor:
-            query1 = sql.SQL("SELECT add_training({strt},{fnsh},{descr},{gr},{tr}, {eq})") \
+            cursor.execute("ROLLBACK;")
+            query1 = sql.SQL("CALL add_training({strt},{fnsh},{descr},{gr},{tr}, {eq})") \
                 .format(strt=sql.Literal(start), fnsh=sql.Literal(finish),
                         descr=sql.Literal(description), gr=sql.Literal(group),
                         tr=sql.Literal(trainer),eq=sql.Literal(equip))

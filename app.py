@@ -140,7 +140,7 @@ def clients():
                 # когда в страницу поиска передаем id клиента, считываем его
                 client_id = request.form.get('id')
 
-                # проверяем, чтобы была введена только цифра и никаких sql инъекций
+                # регулярное выражение для проверки, что была введена только цифра и никаких sql инъекций
                 check_correct_id = re.findall(r"[^0-9]", client_id)
                 if check_correct_id:
                     flash("Введите корректный id", "error")
@@ -405,6 +405,7 @@ def train(id_train):
             db = connection_db(session.get('current_user', SECRET_KEY)[6], session.get('user_password', SECRET_KEY))
             position_user = getPositionUser(session.get('current_user', SECRET_KEY)[0], db)
             user_id_admin = True if position_user['position_number'] == 3 else False
+            user_is_manager = True if position_user['position_number'] == 1 else False
             with db:
 
                 # получаем тренировку по ее id.
@@ -414,7 +415,7 @@ def train(id_train):
                     flash("Тренировка с таким id не найдена или не существует", "error")
                     return redirect(url_for('groups'))
 
-    return render_template('show_train.html', admin=user_id_admin,
+    return render_template('show_train.html', admin=user_id_admin,manager=user_is_manager,
                            trainn=trains,equips=equipp, title="Информация о тренировке")
 
 # добавляем оборудование тренировке

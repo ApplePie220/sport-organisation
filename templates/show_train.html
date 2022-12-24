@@ -4,7 +4,7 @@
         {% for cat, msg in get_flashed_messages(True) %}
         <div  class="flash {{ cat }}">{{ msg }}</div>
         {% endfor %}
-        {% if admin %}
+        {% if current_user.is_authenticated%}
 
         <div class="client">
             <div class="title"><label>Id тренировки: </label> {{ trainn[0]}}</div>
@@ -35,7 +35,7 @@
         </div>
 
         {% endif %}
-        {% if not admin %}
+        {% if not current_user.is_authenticated %}
             <p>Доступ запрещен. Вернись на <a href="{{ url_for('index') }}">главную</a> страницу.
         {% endif %}
     {% endblock %}
