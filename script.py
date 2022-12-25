@@ -10,7 +10,7 @@ def connect():
         connection = psycopg2.connect(
             host='localhost',
             user='postgres',
-            password='frerard2203',
+            password='74NDF*305c',
             database='sportorg'
         )
         return connection
@@ -21,8 +21,6 @@ person = Person(locale=Locale.RU)
 de = Address(locale=Locale.RU)
 generic = Generic(Locale.RU)
 db = connect()
-with db.cursor() as cursor:
-    cursor.execute('ROLLBACK;')
 for i in range(1,560):
     with db.cursor() as cursor:
         firstname = person.first_name()
